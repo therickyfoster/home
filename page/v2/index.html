@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Provenance: Planetary Restoration Archive | planetaryrestorationarchive.com -->
+<!-- GitHub: github.com/therickyfoster | Steward: Foster + Navi -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Foster + Navi · Planetary Restoration Archive">
+<meta name="description" content="Unified multisite dashboard combining news aggregation, peace metrics, and collaboration tools for planetary restoration">
+<link rel="me" href="https://planetaryrestorationarchive.com">
+<link rel="me" href="https://github.com/TheRickyFoster">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiU3ltYmlvdGUgRGFzaGJvYXJkIiwic2hvcnRfbmFtZSI6IlN5bWJpb3RlIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBhMGUxYSIsInRoZW1lX2NvbG9yIjoiIzJkNWYzZiJ9">
+<title>Symbiote Unified Dashboard · Planetary Restoration Archive</title>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#2d5f3f;--primary-light:#3a7a52;--secondary:#5a8f7b;--accent:#7fb069;--bg:#0a0e1a;--surface:rgba(20,25,40,0.9);--surface-alt:rgba(30,35,50,0.85);--text:#e8f0f2;--text-secondary:#b8c5d0;--text-tertiary:#8896a4;--border:rgba(127,176,105,0.2);--shadow:rgba(0,0,0,0.5);--success:#16a34a;--warning:#f59e0b;--danger:#dc2626;--info:#3b82f6;--transition:200ms cubic-bezier(0.4,0,0.2,1)}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;position:relative}
+#galaxy-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:linear-gradient(to bottom,#0a0e1a,#1a1e2e,#0a0e1a)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip-link{position:absolute;top:-40px;left:0;background:var(--primary);color:white;padding:0.5rem 1rem;text-decoration:none;z-index:10000}
+.skip-link:focus{top:0}
+header{background:var(--surface);border-bottom:2px solid var(--primary);position:sticky;top:0;z-index:1000;box-shadow:0 2px 8px var(--shadow);backdrop-filter:blur(10px)}
+.header-content{max-width:1600px;margin:0 auto;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none;color:var(--text)}
+.logo-icon{font-size:1.75rem}
+.logo-text h1{font-size:1.25rem;font-weight:700;color:var(--primary);line-height:1.2}
+.logo-text .subtitle{font-size:0.75rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em}
+.header-actions{display:flex;gap:0.5rem;align-items:center}
+.btn{padding:0.5rem 1rem;border:none;border-radius:6px;background:var(--surface-alt);color:var(--text);cursor:pointer;font-size:0.875rem;font-weight:500;transition:all var(--transition);display:inline-flex;align-items:center;gap:0.5rem;text-decoration:none}
+.btn:hover,.btn:focus{background:var(--primary);color:white;transform:translateY(-1px);box-shadow:0 2px 8px var(--shadow)}
+.btn:focus{outline:2px solid var(--primary);outline-offset:2px}
+.btn-primary{background:var(--primary);color:white}
+.btn-primary:hover,.btn-primary:focus{background:var(--primary-light)}
+nav{background:var(--surface-alt);border-bottom:1px solid var(--border);backdrop-filter:blur(10px)}
+.nav-content{max-width:1600px;margin:0 auto;padding:0 1.5rem;display:flex;gap:0.5rem;overflow-x:auto}
+.nav-tab{padding:0.75rem 1.25rem;background:transparent;border:none;color:var(--text-secondary);cursor:pointer;font-size:0.875rem;font-weight:500;white-space:nowrap;transition:color var(--transition);border-bottom:2px solid transparent}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+main{max-width:1600px;margin:0 auto;padding:2rem 1.5rem}
+.dashboard-section{display:none;animation:fadeIn 0.3s ease-in-out}
+.dashboard-section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.grid{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(400px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--surface);border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px var(--shadow);border:1px solid var(--border);transition:all var(--transition);backdrop-filter:blur(10px)}
+.card:hover{box-shadow:0 4px 16px var(--shadow);transform:translateY(-2px);border-color:var(--primary)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border)}
+.card-title{font-size:1.125rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:0.5rem}
+.card-badge{display:inline-flex;align-items:center;gap:0.25rem;padding:0.25rem 0.5rem;border-radius:4px;font-size:0.75rem;font-weight:600;background:var(--surface-alt);color:var(--text-secondary)}
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+.metric-card{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:white;padding:1.5rem;border-radius:8px;box-shadow:0 2px 8px var(--shadow);transition:transform var(--transition);border:1px solid rgba(127,176,105,0.3)}
+.metric-card:hover{transform:translateY(-4px)}
+.metric-label{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;opacity:0.9;margin-bottom:0.5rem}
+.metric-value{font-size:2rem;font-weight:700;line-height:1;margin-bottom:0.25rem}
+.metric-change{font-size:0.875rem;opacity:0.9}
+.feed-container{display:grid;gap:1.5rem}
+.feed-item{background:var(--surface);border-radius:8px;padding:1.25rem;border-left:4px solid var(--primary);box-shadow:0 1px 4px var(--shadow);transition:all var(--transition)}
+.feed-item:hover{box-shadow:0 2px 8px var(--shadow);transform:translateX(4px)}
+.feed-item-header{display:flex;justify-content:space-between;align-items:start;gap:1rem;margin-bottom:0.75rem}
+.feed-item-title{font-size:1rem;font-weight:600;color:var(--text);line-height:1.4;flex:1}
+.feed-item-source{font-size:0.75rem;color:var(--text-tertiary);white-space:nowrap}
+.feed-item-description{font-size:0.875rem;color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem}
+.feed-item-meta{display:flex;gap:1rem;font-size:0.75rem;color:var(--text-tertiary)}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
+.tool-card{background:var(--surface);border-radius:8px;padding:1.5rem;border:2px solid var(--border);transition:all var(--transition);cursor:pointer}
+.tool-card:hover{border-color:var(--primary);box-shadow:0 4px 16px var(--shadow);transform:translateY(-4px)}
+.tool-icon{font-size:2rem;margin-bottom:1rem}
+.tool-name{font-size:1.125rem;font-weight:700;color:var(--primary);margin-bottom:0.5rem}
+.tool-description{font-size:0.875rem;color:var(--text-secondary);line-height:1.6}
+.search-container{margin-bottom:2rem;position:relative}
+.search-input{width:100%;padding:0.75rem 1rem 0.75rem 2.75rem;border:2px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:1rem;transition:border-color var(--transition)}
+.search-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(127,176,105,0.1)}
+.search-icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-tertiary)}
+.alert{padding:1rem 1.25rem;border-radius:8px;margin-bottom:1rem;border-left:4px solid;display:flex;align-items:start;gap:1rem;background:var(--surface)}
+.alert-success{border-color:var(--success);color:var(--success)}
+.alert-warning{border-color:var(--warning);color:var(--warning)}
+.alert-danger{border-color:var(--danger);color:var(--danger)}
+.alert-info{border-color:var(--info);color:var(--info)}
+.tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;border-bottom:2px solid var(--border)}
+.tab-btn{padding:0.75rem 1.5rem;background:transparent;border:none;color:var(--text-secondary);cursor:pointer;font-size:0.875rem;font-weight:500;transition:color var(--transition);border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fadeIn 0.3s ease-in-out}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:0.5rem}
+.status-active{background:var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+footer{background:var(--surface);border-top:1px solid var(--border);margin-top:4rem;padding:2rem 1.5rem;backdrop-filter:blur(10px)}
+.footer-content{max-width:1600px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem}
+.footer-section h3{font-size:1rem;font-weight:700;color:var(--primary);margin-bottom:1rem}
+.footer-section p,.footer-section li{font-size:0.875rem;color:var(--text-secondary);line-height:1.6}
+.footer-section ul{list-style:none}
+.footer-section a{color:var(--text-secondary);text-decoration:none;transition:color var(--transition)}
+.footer-section a:hover{color:var(--primary)}
+.footer-bottom{max-width:1600px;margin:2rem auto 0;padding-top:2rem;border-top:1px solid var(--border);text-align:center;font-size:0.75rem;color:var(--text-tertiary)}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:2000;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(5px)}
+.modal.active{display:flex}
+.modal-content{background:var(--surface);border-radius:12px;padding:2rem;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px var(--shadow);animation:slideUp 0.3s ease-out;border:1px solid var(--border)}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid var(--border)}
+.modal-title{font-size:1.5rem;font-weight:700;color:var(--primary)}
+.modal-close{background:none;border:none;font-size:1.5rem;color:var(--text-secondary);cursor:pointer;padding:0.25rem;line-height:1}
+.modal-close:hover{color:var(--text)}
+.form-group{margin-bottom:1.5rem}
+.form-label{display:block;font-weight:600;margin-bottom:0.5rem;color:var(--text)}
+.form-input,.form-textarea,.form-select{width:100%;padding:0.75rem;border:2px solid var(--border);border-radius:6px;background:var(--surface-alt);color:var(--text);font-size:1rem;font-family:inherit;transition:border-color var(--transition)}
+.form-input:focus,.form-textarea:focus,.form-select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(127,176,105,0.1)}
+.form-textarea{resize:vertical;min-height:120px}
+.gamification-panel{position:fixed;bottom:20px;right:20px;z-index:1500;background:var(--surface);border:2px solid var(--primary);border-radius:12px;box-shadow:0 4px 16px var(--shadow);transition:all var(--transition)}
+.gam-toggle{background:var(--primary);color:white;border:none;padding:0.75rem 1.25rem;border-radius:10px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:0.5rem;font-size:1rem;transition:all var(--transition)}
+.gam-toggle:hover{background:var(--primary-light);transform:scale(1.05)}
+.gam-content{display:none;padding:1.5rem;min-width:250px}
+.gamification-panel.expanded .gam-content{display:block;animation:slideUp 0.3s ease-out}
+.gam-stat{display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.875rem}
+.gam-stat:last-of-type{border-bottom:none;margin-bottom:1rem}
+.gam-progress{background:var(--border);height:12px;border-radius:6px;overflow:hidden;margin-bottom:1rem}
+.gam-progress-bar{background:linear-gradient(90deg,var(--primary),var(--primary-light));height:100%;transition:width 0.5s ease-out}
+.gam-badges{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem}
+.badge{display:inline-flex;align-items:center;gap:0.25rem;padding:0.25rem 0.5rem;background:linear-gradient(135deg,var(--accent),var(--primary));color:white;border-radius:12px;font-size:0.75rem;font-weight:600}
+.tool-help{background:var(--surface-alt);padding:1rem;border-radius:6px;border-left:3px solid var(--info);margin-bottom:1.5rem;font-size:0.875rem;color:var(--text-secondary)}
+.tool-output{background:var(--surface-alt);padding:1.5rem;border-radius:8px;border:1px solid var(--border);margin-top:1rem}
+.tool-output h4{color:var(--primary);margin-bottom:1rem}
+.tool-output-section{margin-bottom:1.5rem}
+.tool-output-section:last-child{margin-bottom:0}
+.tool-output-label{font-weight:600;color:var(--text);margin-bottom:0.5rem}
+.tool-output-value{color:var(--text-secondary);line-height:1.6}
+[data-tooltip]{position:relative;cursor:help}
+[data-tooltip]::before{content:attr(data-tooltip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%) translateY(-8px);background:var(--text);color:var(--bg);padding:0.5rem 0.75rem;border-radius:6px;font-size:0.75rem;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity var(--transition);z-index:1000}
+[data-tooltip]:hover::before{opacity:1}
+.watchlist-container{background:var(--surface);border-radius:8px;padding:1.5rem;border:2px solid var(--warning)}
+.watchlist-item{padding:1rem;background:var(--surface-alt);border-radius:6px;margin-bottom:0.75rem;border-left:3px solid var(--warning)}
+.watchlist-item:last-child{margin-bottom:0}
+.watchlist-keyword{font-weight:600;color:var(--warning);margin-bottom:0.5rem}
+.network-container{background:var(--surface);border-radius:8px;padding:2rem;min-height:400px;position:relative;overflow:hidden}
+.network-node{position:absolute;width:80px;height:80px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.875rem;text-align:center;box-shadow:0 4px 12px var(--shadow);transition:all var(--transition);cursor:pointer}
+.network-node:hover{transform:scale(1.1);z-index:10}
+.peace-needle-gauge{background:var(--surface-alt);border-radius:12px;padding:2rem;margin-top:1.5rem;border:1px solid var(--border)}
+.needle-container{position:relative;width:100%;max-width:400px;margin:0 auto;height:200px}
+.needle-arc{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:350px;height:175px}
+.needle-pointer{position:absolute;bottom:0;left:50%;width:4px;height:150px;background:var(--text);transform-origin:bottom center;transform:translateX(-50%) rotate(-90deg);transition:transform 1s cubic-bezier(0.4,0,0.2,1);border-radius:2px 2px 0 0}
+.needle-pointer::before{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:12px solid var(--text)}
+.needle-center{position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:20px;height:20px;background:var(--primary);border-radius:50%;border:3px solid var(--text)}
+.needle-labels{display:flex;justify-content:space-between;margin-top:0.5rem;padding:0 2rem}
+.needle-label{font-size:0.875rem;font-weight:600}
+.needle-label.collapse{color:var(--danger)}
+.needle-label.peace{color:var(--success)}
+.needle-score{text-align:center;margin-top:1rem;font-size:1.5rem;font-weight:700;color:var(--primary)}
+.needle-scale{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:350px;height:4px;background:linear-gradient(to right,#dc2626,#f59e0b,#7fb069);border-radius:2px}
+.analysis-items{margin-top:1.5rem;display:grid;gap:1rem}
+.analysis-item{background:var(--surface);padding:1rem;border-radius:8px;border-left:3px solid var(--border)}
+.analysis-item.peace{border-left-color:var(--success)}
+.analysis-item.collapse{border-left-color:var(--danger)}
+.analysis-item.neutral{border-left-color:var(--warning)}
+.analysis-title{font-weight:600;margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center}
+.analysis-score{font-size:0.875rem;padding:0.25rem 0.5rem;border-radius:4px;background:var(--surface-alt)}
+@media(max-width:768px){.header-content{flex-direction:column;align-items:stretch}.header-actions{justify-content:center}.grid-2,.grid-3{grid-template-columns:1fr}.metrics-grid{grid-template-columns:repeat(2,1fr)}.footer-content{grid-template-columns:1fr}}
+@media print{#galaxy-canvas{display:none}header,nav,.header-actions,.btn,footer{display:none}main{max-width:100%;padding:0}.card,.feed-item{break-inside:avoid;box-shadow:none;border:1px solid #000}}
+</style>
+</head>
+<body>
+<canvas id="galaxy-canvas"></canvas>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header role="banner">
+<div class="header-content">
+<a href="#" class="logo" aria-label="Symbiote Unified Dashboard Home">
+<span class="logo-icon" aria-hidden="true">🌐</span>
+<div class="logo-text">
+<h1>Symbiote Unified Dashboard</h1>
+<div class="subtitle">Planetary Restoration Archive</div>
+</div>
+</a>
+<div class="header-actions">
+<button class="btn" id="search-btn" aria-label="Search" data-tooltip="Search across all feeds">
+<span aria-hidden="true">🔍</span>Search
+</button>
+<button class="btn" id="rss-btn" aria-label="RSS Feed" data-tooltip="Generate RSS feed">
+<span aria-hidden="true">📡</span>RSS
+</button>
+<button class="btn" id="settings-btn" aria-label="Settings">
+<span aria-hidden="true">⚙️</span>Settings
+</button>
+<button class="btn btn-primary" id="export-btn" aria-label="Export data">
+<span aria-hidden="true">💾</span>Export
+</button>
+</div>
+</div>
+</header>
+
+<nav role="navigation" aria-label="Main navigation">
+<div class="nav-content">
+<button class="nav-tab active" data-section="overview" aria-selected="true">
+<span aria-hidden="true">📊</span> Overview
+</button>
+<button class="nav-tab" data-section="news" aria-selected="false">
+<span aria-hidden="true">📰</span> News Mycelium
+</button>
+<button class="nav-tab" data-section="peace" aria-selected="false">
+<span aria-hidden="true">🕊️</span> Peace Metrics
+</button>
+<button class="nav-tab" data-section="tools" aria-selected="false">
+<span aria-hidden="true">🛠️</span> Peace Tools
+</button>
+<button class="nav-tab" data-section="network" aria-selected="false">
+<span aria-hidden="true">🤝</span> Network
+</button>
+</div>
+</nav>
+
+<main id="main-content" role="main">
+
+<section class="dashboard-section active" id="overview-section" aria-labelledby="overview-heading">
+<h2 id="overview-heading" class="sr-only">Dashboard Overview</h2>
+
+<div class="metrics-grid">
+<div class="metric-card" role="status" aria-label="Active news feeds">
+<div class="metric-label">Active Feeds</div>
+<div class="metric-value" id="metric-feeds">12</div>
+<div class="metric-change">↑ 3 since yesterday</div>
+</div>
+<div class="metric-card" role="status" aria-label="Active conflicts">
+<div class="metric-label">Active Conflicts</div>
+<div class="metric-value" id="metric-conflicts">23</div>
+<div class="metric-change">↓ 2 this week</div>
+</div>
+<div class="metric-card" role="status" aria-label="Aid corridors">
+<div class="metric-label">Aid Corridors</div>
+<div class="metric-value" id="metric-corridors">47</div>
+<div class="metric-change">→ Stable</div>
+</div>
+<div class="metric-card" role="status" aria-label="Peace talks">
+<div class="metric-label">Peace Talks</div>
+<div class="metric-value" id="metric-talks">8</div>
+<div class="metric-change">↑ 1 new session</div>
+</div>
+</div>
+
+<div class="alert alert-info">
+<span aria-hidden="true">ℹ️</span>
+<div><strong>Live Status:</strong> All systems operational. News feeds refresh every 5 minutes. Peace metrics updated in real-time.</div>
+</div>
+
+<div class="grid-2">
+<div class="card">
+<div class="card-header">
+<h3 class="card-title"><span aria-hidden="true">📡</span>Recent Activity</h3>
+<span class="card-badge"><span class="status-dot status-active" aria-label="Active"></span>Live</span>
+</div>
+<div class="card-body"><div id="activity-feed"></div></div>
+</div>
+
+<div class="card">
+<div class="card-header">
+<h3 class="card-title"><span aria-hidden="true">⚠️</span>Priority Alerts</h3>
+<span class="card-badge" id="alert-count">3</span>
+</div>
+<div class="card-body"><div id="priority-alerts"></div></div>
+</div>
+</div>
+
+<div class="card" style="margin-top:1.5rem">
+<div class="card-header">
+<h3 class="card-title"><span aria-hidden="true">🗺️</span>Quick Access</h3>
+</div>
+<div class="card-body">
+<div class="grid-3">
+<button class="tool-card" onclick="showSection('news')">
+<div class="tool-icon" aria-hidden="true">📰</div>
+<div class="tool-name">News Aggregation</div>
+<div class="tool-description">Monitor global feeds with intelligent filtering</div>
+</button>
+<button class="tool-card" onclick="showSection('peace')">
+<div class="tool-icon" aria-hidden="true">🕊️</div>
+<div class="tool-name">Peace Dashboard</div>
+<div class="tool-description">Track conflicts and peace-building initiatives</div>
+</button>
+<button class="tool-card" onclick="showSection('network')">
+<div class="tool-icon" aria-hidden="true">🤝</div>
+<div class="tool-name">Collaboration Network</div>
+<div class="tool-description">Connect with UN agencies and NGOs</div>
+</button>
+</div>
+</div>
+</div>
+</section>
+
+<section class="dashboard-section" id="news-section" aria-labelledby="news-heading">
+<div class="card-header" style="margin-bottom:1.5rem">
+<h2 id="news-heading" class="card-title" style="font-size:1.5rem"><span aria-hidden="true">📰</span>News Mycelium</h2>
+<button class="btn" id="refresh-news"><span aria-hidden="true">🔄</span>Refresh</button>
+</div>
+
+<div class="search-container">
+<span class="search-icon" aria-hidden="true">🔍</span>
+<input type="search" class="search-input" id="news-search" placeholder="Search news feeds..." aria-label="Search news feeds">
+</div>
+
+<div class="tabs">
+<button class="tab-btn active" data-tab="global-feed">Global Feeds</button>
+<button class="tab-btn" data-tab="conflict-feed">Conflict & Relief</button>
+<button class="tab-btn" data-tab="tech-feed">Tech & AI</button>
+<button class="tab-btn" data-tab="watchlist-feed">Watchlist</button>
+</div>
+
+<div class="tab-content active" id="global-feed">
+<div class="feed-container" id="global-news-feed"></div>
+</div>
+
+<div class="tab-content" id="conflict-feed">
+<div class="feed-container" id="conflict-news-feed"></div>
+</div>
+
+<div class="tab-content" id="tech-feed">
+<div class="feed-container" id="tech-news-feed"></div>
+</div>
+
+<div class="tab-content" id="watchlist-feed">
+<div class="alert alert-warning">
+<span aria-hidden="true">⚠️</span>
+<div><strong>Watchlist Active:</strong> Monitoring keywords. Configure in Settings.</div>
+</div>
+<div class="watchlist-container" id="watchlist-alerts"></div>
+</div>
+</section>
+
+<section class="dashboard-section" id="peace-section" aria-labelledby="peace-heading">
+<div class="card-header" style="margin-bottom:1.5rem">
+<h2 id="peace-heading" class="card-title" style="font-size:1.5rem"><span aria-hidden="true">🕊️</span>Global Peace Metrics</h2>
+<button class="btn" id="refresh-peace"><span aria-hidden="true">🔄</span>Update</button>
+</div>
+
+<div class="metrics-grid">
+<div class="metric-card" style="background:linear-gradient(135deg,#dc2626 0%,#ef4444 100%)">
+<div class="metric-label">Active Conflicts</div>
+<div class="metric-value">23</div>
+<div class="metric-change">Monitoring 12 critical zones</div>
+</div>
+<div class="metric-card" style="background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%)">
+<div class="metric-label">Aid Corridors</div>
+<div class="metric-value">47</div>
+<div class="metric-change">38 active, 9 establishing</div>
+</div>
+<div class="metric-card" style="background:linear-gradient(135deg,#f59e0b 0%,#fbbf24 100%)">
+<div class="metric-label">Displaced (M)</div>
+<div class="metric-value">108.4</div>
+<div class="metric-change">UNHCR data, Oct 2025</div>
+</div>
+<div class="metric-card" style="background:linear-gradient(135deg,#7fb069 0%,#95c57f 100%)">
+<div class="metric-label">Peace Talks</div>
+<div class="metric-value">8</div>
+<div class="metric-change">3 active, 5 scheduled</div>
+</div>
+</div>
+
+<div class="grid-2">
+<div class="card">
+<div class="card-header">
+<h3 class="card-title"><span aria-hidden="true">🗺️</span>Conflict Zones</h3>
+</div>
+<div class="card-body"><div id="conflict-zones"></div></div>
+</div>
+
+<div class="card">
+<div class="card-header">
+<h3 class="card-title"><span aria-hidden="true">🚁</span>Humanitarian Status</h3>
+</div>
+<div class="card-body"><div id="humanitarian-status"></div></div>
+</div>
+</div>
+</section>
+
+<section class="dashboard-section" id="tools-section" aria-labelledby="tools-heading">
+<div class="card-header" style="margin-bottom:1.5rem">
+<h2 id="tools-heading" class="card-title" style="font-size:1.5rem"><span aria-hidden="true">🛠️</span>Peace Building Tools</h2>
+</div>
+
+<div class="tools-grid">
+<div class="tool-card" onclick="openTool('mediation')" data-tooltip="Generate neutral dialogue templates for peace negotiations">
+<div class="tool-icon" aria-hidden="true">💬</div>
+<div class="tool-name">Mediation Framework</div>
+<div class="tool-description">Neutral dialogue templates and de-escalation language</div>
+</div>
+
+<div class="tool-card" onclick="openTool('coordination')" data-tooltip="Map aid corridors and coordinate delivery logistics">
+<div class="tool-icon" aria-hidden="true">🗺️</div>
+<div class="tool-name">Humanitarian Coordination</div>
+<div class="tool-description">Aid corridor mapping and resource allocation</div>
+</div>
+
+<div class="tool-card" onclick="openTool('monitor')" data-tooltip="Track ceasefire compliance in real-time">
+<div class="tool-icon" aria-hidden="true">📡</div>
+<div class="tool-name">Ceasefire Monitor</div>
+<div class="tool-description">Real-time violation tracking and reporting</div>
+</div>
+
+<div class="tool-card" onclick="openTool('earlywarning')" data-tooltip="Analyze conflict indicators and generate preventive alerts">
+<div class="tool-icon" aria-hidden="true">⚠️</div>
+<div class="tool-name">Early Warning System</div>
+<div class="tool-description">Conflict prediction and preventive alerts</div>
+</div>
+
+<div class="tool-card" onclick="openTool('dialogue')" data-tooltip="Navigate cultural sensitivities in peace processes">
+<div class="tool-icon" aria-hidden="true">🎭</div>
+<div class="tool-name">Dialogue Facilitation</div>
+<div class="tool-description">Cultural mediation resources</div>
+</div>
+
+<div class="tool-card" onclick="showNotification('Grassroots tool coming soon','info')">
+<div class="tool-icon" aria-hidden="true">🤝</div>
+<div class="tool-name">Grassroots Peace</div>
+<div class="tool-description">Community reconciliation programs</div>
+</div>
+</div>
+</section>
+
+<section class="dashboard-section" id="network-section" aria-labelledby="network-heading">
+<div class="card-header" style="margin-bottom:1.5rem">
+<h2 id="network-heading" class="card-title" style="font-size:1.5rem"><span aria-hidden="true">🤝</span>Collaboration Network</h2>
+</div>
+
+<div class="card">
+<div class="card-header">
+<h3 class="card-title"><span aria-hidden="true">🕸️</span>Network Visualization</h3>
+</div>
+<div class="card-body">
+<div class="network-container" id="network-viz">
+<div class="network-node" style="top:50%;left:50%;transform:translate(-50%,-50%)">HUB</div>
+<div class="network-node" style="top:20%;left:20%">UN</div>
+<div class="network-node" style="top:20%;right:20%">NGOs</div>
+<div class="network-node" style="bottom:20%;left:20%">Local</div>
+<div class="network-node" style="bottom:20%;right:20%">Media</div>
+</div>
+</div>
+</div>
+
+<div class="grid-2" style="margin-top:1.5rem">
+<div class="card">
+<div class="card-header">
+<h3 class="card-title"><span aria-hidden="true">🏛️</span>Partner Organizations</h3>
+</div>
+<div class="card-body"><div id="partner-list"></div></div>
+</div>
+
+<div class="card">
+<div class="card-header">
+<h3 class="card-title"><span aria-hidden="true">📨</span>Active Collaborations</h3>
+</div>
+<div class="card-body"><div id="collaboration-list"></div></div>
+</div>
+</div>
+</section>
+
+</main>
+
+<div class="modal" id="settings-modal" role="dialog" aria-labelledby="settings-title" aria-modal="true">
+<div class="modal-content">
+<div class="modal-header">
+<h3 class="modal-title" id="settings-title">Settings</h3>
+<button class="modal-close" onclick="closeModal('settings-modal')" aria-label="Close">×</button>
+</div>
+<div class="modal-body">
+<div class="form-group">
+<label class="form-label" for="watchlist-keywords">Watchlist Keywords</label>
+<textarea class="form-textarea" id="watchlist-keywords" placeholder="Enter keywords separated by commas...">ceasefire, humanitarian, peace talks, sanctions</textarea>
+</div>
+<div class="form-group">
+<label class="form-label" for="refresh-interval">Refresh Interval (minutes)</label>
+<input type="number" class="form-input" id="refresh-interval" value="5" min="1" max="60">
+</div>
+<button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+</div>
+</div>
+</div>
+
+<div class="modal" id="export-modal" role="dialog" aria-labelledby="export-title" aria-modal="true">
+<div class="modal-content">
+<div class="modal-header">
+<h3 class="modal-title" id="export-title">Export Data</h3>
+<button class="modal-close" onclick="closeModal('export-modal')" aria-label="Close">×</button>
+</div>
+<div class="modal-body">
+<p>Choose your export format:</p>
+<div style="display:flex;flex-direction:column;gap:1rem;margin-top:1.5rem">
+<button class="btn btn-primary" onclick="exportHTML()">
+<span aria-hidden="true">📄</span> Export as HTML
+</button>
+<button class="btn btn-primary" onclick="exportJSON()">
+<span aria-hidden="true">📊</span> Export as JSON
+</button>
+<button class="btn btn-primary" onclick="window.print()">
+<span aria-hidden="true">🖨️</span> Print / Save as PDF
+</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal" id="mediation-modal" role="dialog" aria-labelledby="mediation-title" aria-modal="true">
+<div class="modal-content">
+<div class="modal-header">
+<h3 class="modal-title" id="mediation-title">💬 Mediation Framework</h3>
+<button class="modal-close" onclick="closeModal('mediation-modal')" aria-label="Close">×</button>
+</div>
+<div class="modal-body">
+<p class="tool-help">Generate neutral dialogue templates for peace negotiations.</p>
+<div class="form-group">
+<label class="form-label" for="mediation-context">Conflict Context</label>
+<textarea class="form-textarea" id="mediation-context" placeholder="Describe the situation..."></textarea>
+</div>
+<div class="form-group">
+<label class="form-label" for="mediation-parties">Number of Parties</label>
+<input type="number" class="form-input" id="mediation-parties" value="2" min="2" max="10">
+</div>
+<div class="form-group">
+<label class="form-label" for="mediation-type">Framework Type</label>
+<select class="form-select" id="mediation-type">
+<option value="shuttle">Shuttle Diplomacy</option>
+<option value="direct">Direct Dialogue</option>
+<option value="facilitated">Facilitated Discussion</option>
+<option value="track2">Track II Diplomacy</option>
+</select>
+</div>
+<button class="btn btn-primary" onclick="generateMediationFramework()">Generate Framework</button>
+<div id="mediation-output"></div>
+</div>
+</div>
+</div>
+
+<div class="modal" id="coordination-modal" role="dialog" aria-labelledby="coord-title" aria-modal="true">
+<div class="modal-content">
+<div class="modal-header">
+<h3 class="modal-title" id="coord-title">🗺️ Humanitarian Coordination</h3>
+<button class="modal-close" onclick="closeModal('coordination-modal')" aria-label="Close">×</button>
+</div>
+<div class="modal-body">
+<p class="tool-help">Map aid corridors and coordinate delivery logistics.</p>
+<div class="form-group">
+<label class="form-label" for="coord-location">Target Location</label>
+<input type="text" class="form-input" id="coord-location" placeholder="Region or coordinates">
+</div>
+<div class="form-group">
+<label class="form-label" for="coord-resources">Resource Types</label>
+<input type="text" class="form-input" id="coord-resources" placeholder="Food, Medical, Shelter, Water">
+</div>
+<div class="form-group">
+<label class="form-label" for="coord-priority">Priority Level</label>
+<select class="form-select" id="coord-priority">
+<option value="routine">Routine</option>
+<option value="urgent">Urgent</option>
+<option value="critical">Critical</option>
+<option value="emergency">Emergency</option>
+</select>
+</div>
+<button class="btn btn-primary" onclick="createCoordinationPlan()">Create Plan</button>
+<div id="coordination-output"></div>
+</div>
+</div>
+</div>
+
+<div class="modal" id="monitor-modal" role="dialog" aria-labelledby="monitor-title" aria-modal="true">
+<div class="modal-content">
+<div class="modal-header">
+<h3 class="modal-title" id="monitor-title">📡 Ceasefire Monitor</h3>
+<button class="modal-close" onclick="closeModal('monitor-modal')" aria-label="Close">×</button>
+</div>
+<div class="modal-body">
+<p class="tool-help">Track ceasefire compliance and generate reports.</p>
+<div class="form-group">
+<label class="form-label" for="monitor-zone">Monitoring Zone</label>
+<input type="text" class="form-input" id="monitor-zone" placeholder="Zone identifier">
+</div>
+<div class="form-group">
+<label class="form-label" for="monitor-period">Period (hours)</label>
+<input type="number" class="form-input" id="monitor-period" value="24" min="1">
+</div>
+<div class="form-group">
+<label class="form-label" for="monitor-violations">Recorded Violations</label>
+<input type="number" class="form-input" id="monitor-violations" value="0" min="0">
+</div>
+<button class="btn btn-primary" onclick="generateMonitorReport()">Generate Report</button>
+<button class="btn" onclick="logViolation()" style="margin-left:0.5rem">Log Violation</button>
+<div id="monitor-output"></div>
+</div>
+</div>
+</div>
+
+<div class="modal" id="rss-modal" role="dialog" aria-labelledby="rss-title" aria-modal="true">
+<div class="modal-content">
+<div class="modal-header">
+<h3 class="modal-title" id="rss-title">📡 RSS Feed with Peace Analysis</h3>
+<button class="modal-close" onclick="closeModal('rss-modal')" aria-label="Close">×</button>
+</div>
+<div class="modal-body">
+<p>Generate RSS feed with WebLLM peace/collapse analysis.</p>
+<div class="form-group">
+<label class="form-label" for="rss-title-input">Feed Title</label>
+<input type="text" class="form-input" id="rss-title-input" value="Peace Dashboard Feed">
+</div>
+<div class="form-group">
+<label class="form-label">Include:</label>
+<label><input type="checkbox" id="rss-alerts" checked> Priority Alerts</label><br>
+<label><input type="checkbox" id="rss-metrics" checked> Peace Metrics</label><br>
+<label><input type="checkbox" id="rss-activities" checked> Activities</label>
+</div>
+<div class="form-group">
+<label class="form-label">WebLLM Analysis</label>
+<label><input type="checkbox" id="rss-llm-analyze" checked> Enable peace/collapse sentiment analysis</label>
+<div id="llm-status" style="margin-top:0.5rem;font-size:0.875rem;color:var(--text-tertiary)"></div>
+</div>
+<button class="btn btn-primary" onclick="generateRSSFeed()" id="rss-generate-btn">Generate RSS</button>
+<div id="rss-output"></div>
+<div id="peace-needle-container" style="margin-top:2rem"></div>
+</div>
+</div>
+</div>
+
+<div class="modal" id="earlywarning-modal" role="dialog" aria-labelledby="earlywarning-title" aria-modal="true">
+<div class="modal-content">
+<div class="modal-header">
+<h3 class="modal-title" id="earlywarning-title">⚠️ Early Warning System</h3>
+<button class="modal-close" onclick="closeModal('earlywarning-modal')" aria-label="Close">×</button>
+</div>
+<div class="modal-body">
+<p class="tool-help">Analyze conflict indicators and generate preventive diplomacy alerts.</p>
+<div class="form-group">
+<label class="form-label" for="warning-region">Region/Location</label>
+<input type="text" class="form-input" id="warning-region" placeholder="Enter region name">
+</div>
+<div class="form-group">
+<label class="form-label" for="warning-indicators">Conflict Indicators (select all that apply)</label>
+<label><input type="checkbox" id="indicator-economic" checked> Economic instability</label><br>
+<label><input type="checkbox" id="indicator-political"> Political tensions</label><br>
+<label><input type="checkbox" id="indicator-social" checked> Social unrest</label><br>
+<label><input type="checkbox" id="indicator-resource"> Resource scarcity</label><br>
+<label><input type="checkbox" id="indicator-displacement"> Population displacement</label>
+</div>
+<div class="form-group">
+<label class="form-label" for="warning-threat">Threat Assessment Level</label>
+<select class="form-select" id="warning-threat">
+<option value="low">Low - Monitor closely</option>
+<option value="medium">Medium - Prepare response</option>
+<option value="high" selected>High - Immediate action needed</option>
+<option value="critical">Critical - Emergency protocols</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label" for="warning-timeframe">Estimated Timeframe</label>
+<select class="form-select" id="warning-timeframe">
+<option value="immediate">Immediate (0-48 hours)</option>
+<option value="short">Short-term (1-2 weeks)</option>
+<option value="medium" selected>Medium-term (1-3 months)</option>
+<option value="long">Long-term (3-12 months)</option>
+</select>
+</div>
+<button class="btn btn-primary" onclick="generateEarlyWarning()">Generate Alert</button>
+<div id="earlywarning-output"></div>
+</div>
+</div>
+</div>
+
+<div class="modal" id="dialogue-modal" role="dialog" aria-labelledby="dialogue-title" aria-modal="true">
+<div class="modal-content">
+<div class="modal-header">
+<h3 class="modal-title" id="dialogue-title">🎭 Dialogue Facilitation</h3>
+<button class="modal-close" onclick="closeModal('dialogue-modal')" aria-label="Close">×</button>
+</div>
+<div class="modal-body">
+<p class="tool-help">Navigate cultural sensitivities and facilitate cross-community dialogue.</p>
+<div class="form-group">
+<label class="form-label" for="dialogue-communities">Communities Involved</label>
+<input type="text" class="form-input" id="dialogue-communities" placeholder="e.g., Community A, Community B">
+</div>
+<div class="form-group">
+<label class="form-label" for="dialogue-cultural">Cultural Context Notes</label>
+<textarea class="form-textarea" id="dialogue-cultural" placeholder="Describe cultural, religious, or historical sensitivities..."></textarea>
+</div>
+<div class="form-group">
+<label class="form-label" for="dialogue-topics">Sensitive Topics</label>
+<input type="text" class="form-input" id="dialogue-topics" placeholder="Land rights, resources, historical grievances...">
+</div>
+<div class="form-group">
+<label class="form-label" for="dialogue-approach">Facilitation Approach</label>
+<select class="form-select" id="dialogue-approach">
+<option value="restorative">Restorative Justice</option>
+<option value="appreciative">Appreciative Inquiry</option>
+<option value="narrative">Narrative Mediation</option>
+<option value="transformative" selected>Transformative Dialogue</option>
+<option value="interfaith">Interfaith/Intercultural</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label" for="dialogue-setting">Dialogue Setting</label>
+<select class="form-select" id="dialogue-setting">
+<option value="neutral">Neutral Territory</option>
+<option value="rotating">Rotating Locations</option>
+<option value="sacred">Sacred/Symbolic Space</option>
+<option value="virtual" selected>Virtual/Hybrid</option>
+</select>
+</div>
+<button class="btn btn-primary" onclick="generateDialoguePlan()">Generate Framework</button>
+<div id="dialogue-output"></div>
+</div>
+</div>
+</div>
+
+<div class="gamification-panel" id="gamification-panel">
+<button class="gam-toggle" onclick="toggleGamification()">
+🏆 <span id="total-points">0</span>
+</button>
+<div class="gam-content" id="gam-content">
+<h4 style="margin-bottom:1rem;color:var(--primary)">Your Impact</h4>
+<div class="gam-stat"><span>Points:</span><strong id="gam-points">0</strong></div>
+<div class="gam-stat"><span>Level:</span><strong id="gam-level">1</strong></div>
+<div class="gam-stat"><span>Actions:</span><strong id="gam-actions">0</strong></div>
+<div class="gam-progress"><div class="gam-progress-bar" id="gam-progress-bar"></div></div>
+<div class="gam-badges" id="gam-badges"></div>
+<button class="btn" onclick="shareProgress()" style="width:100%">Share Progress</button>
+</div>
+</div>
+
+<footer role="contentinfo">
+<div class="footer-content">
+<div class="footer-section">
+<h3>About</h3>
+<p>The Symbiote Unified Dashboard combines news aggregation, peace metrics, and collaboration tools for planetary restoration.</p>
+</div>
+<div class="footer-section">
+<h3>Zero-Harm Commitment</h3>
+<p>This tool is designed for peace-building only. Any use for surveillance or harm violates its intended purpose.</p>
+</div>
+<div class="footer-section">
+<h3>Resources</h3>
+<ul>
+<li><a href="https://planetaryrestorationarchive.com">Restoration Archive</a></li>
+<li><a href="https://github.com/TheRickyFoster">GitHub</a></li>
+</ul>
+</div>
+</div>
+<div class="footer-bottom">
+<p>Provenance: <a href="https://planetaryrestorationarchive.com">Planetary Restoration Archive</a> | <a href="https://github.com/TheRickyFoster">GitHub</a></p>
+<p style="margin-top:0.5rem">Built with regenerative intent · Offline-first</p>
+</div>
+</footer>
+
+<div class="sr-only" aria-hidden="true">Planetary Restoration Archive - planetaryrestorationarchive.com - GitHub: github.com/therickyfoster</div>
+
+<script>
+"use strict";
+const canvas=document.getElementById('galaxy-canvas'),ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+const stars=[],constellations=[];
+class Star{constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.size=Math.random()*2;this.brightness=Math.random();this.twinkleSpeed=Math.random()*0.02;this.vx=(Math.random()-0.5)*0.1;this.vy=(Math.random()-0.5)*0.1}
+update(){this.brightness+=this.twinkleSpeed;if(this.brightness>1||this.brightness<0)this.twinkleSpeed*=-1;this.x+=this.vx;this.y+=this.vy;if(this.x<0)this.x=canvas.width;if(this.x>canvas.width)this.x=0;if(this.y<0)this.y=canvas.height;if(this.y>canvas.height)this.y=0}
+draw(){ctx.fillStyle=`rgba(127,176,105,${this.brightness})`;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill()}}
+class Constellation{constructor(points){this.points=points}draw(){ctx.strokeStyle='rgba(127,176,105,0.2)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(stars[this.points[0]].x,stars[this.points[0]].y);for(let i=1;i<this.points.length;i++){ctx.lineTo(stars[this.points[i]].x,stars[this.points[i]].y)}ctx.stroke()}}
+for(let i=0;i<200;i++)stars.push(new Star());
+for(let i=0;i<8;i++){const points=[];const numPoints=Math.floor(Math.random()*3)+3;for(let j=0;j<numPoints;j++){points.push(Math.floor(Math.random()*200))}constellations.push(new Constellation(points))}
+function animateGalaxy(){ctx.clearRect(0,0,canvas.width,canvas.height);constellations.forEach(c=>c.draw());stars.forEach(s=>{s.update();s.draw()});requestAnimationFrame(animateGalaxy)}
+animateGalaxy();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight});
+
+const AppState={currentSection:'overview',newsFeeds:{global:[],conflict:[],tech:[],watchlist:[]},watchlistKeywords:['ceasefire','humanitarian','peace talks','sanctions'],refreshInterval:5,metrics:{feeds:12,conflicts:23,corridors:47,talks:8},lastUpdate:new Date()};
+const GamificationState={points:0,level:1,actions:0,badges:[],history:[]};
+
+document.addEventListener('DOMContentLoaded',()=>{loadFromStorage();loadGamificationState();populateContent();setupEventListeners();registerServiceWorker()});
+
+document.querySelectorAll('.nav-tab').forEach(tab=>{tab.addEventListener('click',e=>{showSection(e.currentTarget.dataset.section)})});
+function showSection(sectionName){document.querySelectorAll('.nav-tab').forEach(tab=>{const isActive=tab.dataset.section===sectionName;tab.classList.toggle('active',isActive);tab.setAttribute('aria-selected',isActive)});document.querySelectorAll('.dashboard-section').forEach(section=>{section.classList.remove('active')});const targetSection=document.getElementById(`${sectionName}-section`);if(targetSection){targetSection.classList.add('active');AppState.currentSection=sectionName}}
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{btn.addEventListener('click',e=>{const tabName=e.currentTarget.dataset.tab;e.currentTarget.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));e.currentTarget.classList.add('active');document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.getElementById(tabName)?.classList.add('active')})});
+
+function openModal(modalName){const modal=document.getElementById(`${modalName}-modal`)||document.getElementById(modalName);if(modal)modal.classList.add('active')}
+function closeModal(modalId){document.getElementById(modalId)?.classList.remove('active')}
+document.querySelectorAll('.modal').forEach(modal=>{modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('active')})});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.modal.active').forEach(m=>m.classList.remove('active'))}});
+
+function setupEventListeners(){document.getElementById('settings-btn').addEventListener('click',()=>openModal('settings-modal'));document.getElementById('rss-btn').addEventListener('click',()=>{openModal('rss-modal');awardPoints(5,'RSS Opened')});document.getElementById('export-btn').addEventListener('click',()=>openModal('export-modal'));document.getElementById('search-btn').addEventListener('click',()=>{document.getElementById('news-search').focus();showSection('news')});document.getElementById('refresh-news')?.addEventListener('click',refreshNewsFeeds);document.getElementById('refresh-peace')?.addEventListener('click',refreshPeaceMetrics);document.getElementById('news-search').addEventListener('input',e=>{const query=e.target.value.toLowerCase();document.querySelectorAll('.feed-item').forEach(item=>{item.style.display=!query||item.textContent.toLowerCase().includes(query)?'block':'none'})})}
+
+function populateContent(){populateActivityFeed();populatePriorityAlerts();populateNewsFeeds();populateConflictZones();populateHumanitarianStatus();populatePartnerList();populateCollaborationList()}
+function populateActivityFeed(){const feed=document.getElementById('activity-feed');const activities=[{time:'2 min ago',text:'New peace talk scheduled',type:'active'},{time:'15 min ago',text:'Humanitarian corridor established',type:'active'},{time:'1 hour ago',text:'Watchlist alert triggered',type:'warning'}];feed.innerHTML=activities.map(a=>`<div style="padding:0.75rem;margin-bottom:0.75rem;background:var(--surface-alt);border-radius:6px"><div style="display:flex;gap:1rem"><span class="status-dot status-${a.type}"></span><div style="flex:1"><div style="font-size:0.875rem">${a.text}</div><div style="font-size:0.75rem;color:var(--text-tertiary);margin-top:0.25rem">${a.time}</div></div></div></div>`).join('')}
+function populatePriorityAlerts(){const alerts=document.getElementById('priority-alerts');const alertData=[{priority:'High',text:'Conflict escalation detected',type:'danger'},{priority:'Medium',text:'Aid delivery delayed',type:'warning'},{priority:'Medium',text:'2 orgs requesting access',type:'info'}];alerts.innerHTML=alertData.map(a=>`<div class="alert alert-${a.type}" style="padding:0.75rem;margin-bottom:0.75rem"><div><strong>${a.priority}:</strong> ${a.text}</div></div>`).join('')}
+function populateNewsFeeds(){const globalFeed=[{title:'UN addresses climate security nexus',source:'UN News',description:'World leaders discuss climate and security integration.',time:'1 hour ago',tags:['UN','Climate']},{title:'New humanitarian corridor opens',source:'UNHCR',description:'Safe passage established for civilians and aid.',time:'3 hours ago',tags:['Humanitarian']}];renderFeedItems('global-news-feed',globalFeed);renderFeedItems('conflict-news-feed',globalFeed);renderFeedItems('tech-news-feed',globalFeed);populateWatchlist()}
+function renderFeedItems(containerId,items){const container=document.getElementById(containerId);container.innerHTML=items.map(item=>`<article class="feed-item"><div class="feed-item-header"><h3 class="feed-item-title">${item.title}</h3><span class="feed-item-source">${item.source}</span></div><p class="feed-item-description">${item.description}</p><div class="feed-item-meta"><span>⏰ ${item.time}</span></div></article>`).join('')}
+function populateWatchlist(){document.getElementById('watchlist-alerts').innerHTML=`<div class="watchlist-item"><div class="watchlist-keyword">🔔 "ceasefire" - 2 matches</div></div>`}
+function populateConflictZones(){const data=[{region:'Region Alpha',status:'Active',level:'High'},{region:'Region Beta',status:'De-escalating',level:'Medium'}];document.getElementById('conflict-zones').innerHTML=data.map(z=>`<div style="padding:0.75rem;background:var(--surface-alt);border-radius:6px;margin-bottom:0.75rem"><div style="display:flex;justify-content:space-between"><strong>${z.region}</strong><span class="card-badge">${z.status}</span></div><div style="font-size:0.875rem;color:var(--text-secondary);margin-top:0.5rem">Risk: ${z.level}</div></div>`).join('')}
+function populateHumanitarianStatus(){const data=[{category:'Food Security',percentage:78},{category:'Medical Access',percentage:62}];document.getElementById('humanitarian-status').innerHTML=data.map(d=>`<div style="padding:0.75rem;background:var(--surface-alt);border-radius:6px;margin-bottom:0.75rem"><div style="display:flex;justify-content:space-between;margin-bottom:0.5rem"><strong>${d.category}</strong><span>${d.percentage}%</span></div><div style="background:var(--border);border-radius:4px;height:8px"><div style="background:var(--primary);height:100%;width:${d.percentage}%"></div></div></div>`).join('')}
+function populatePartnerList(){document.getElementById('partner-list').innerHTML=`<div style="padding:0.75rem;background:var(--surface-alt);border-radius:6px"><strong>UNHCR</strong><div style="font-size:0.75rem;color:var(--text-secondary)">UN Agency</div></div>`}
+function populateCollaborationList(){document.getElementById('collaboration-list').innerHTML=`<div style="padding:0.75rem;background:var(--surface-alt);border-radius:6px"><strong>Aid Corridor Mapping</strong><div style="font-size:0.875rem;color:var(--text-secondary)">3 partners</div></div>`}
+
+function openTool(toolName){openModal(`${toolName}-modal`);awardPoints(5,'Tool Opened')}
+function generateMediationFramework(){const context=document.getElementById('mediation-context').value;if(!context)return showNotification('Please provide context','warning');document.getElementById('mediation-output').innerHTML=`<div class="tool-output"><h4>Framework Generated</h4><div class="tool-output-section"><div class="tool-output-label">Opening Statement:</div><div class="tool-output-value">"We gather in the spirit of dialogue. Each party brings valid perspectives. Our goal is finding common ground."</div></div><button class="btn btn-primary" onclick="exportFramework('mediation')">Export</button></div>`;awardPoints(25,'Framework Generated');incrementAction()}
+function createCoordinationPlan(){const location=document.getElementById('coord-location').value;if(!location)return showNotification('Please provide location','warning');document.getElementById('coordination-output').innerHTML=`<div class="tool-output"><h4>Coordination Plan Created</h4><div class="tool-output-section"><div class="tool-output-label">Location:</div><div class="tool-output-value">${location}</div></div><button class="btn btn-primary" onclick="exportFramework('coordination')">Export</button></div>`;awardPoints(30,'Plan Created');incrementAction()}
+function generateMonitorReport(){const zone=document.getElementById('monitor-zone').value;if(!zone)return showNotification('Please specify zone','warning');document.getElementById('monitor-output').innerHTML=`<div class="tool-output"><h4>Monitor Report</h4><div class="tool-output-section"><div class="tool-output-label">Zone:</div><div class="tool-output-value">${zone}</div></div><button class="btn btn-primary" onclick="exportFramework('monitor')">Export</button></div>`;awardPoints(20,'Report Generated');incrementAction()}
+function logViolation(){const current=parseInt(document.getElementById('monitor-violations').value);document.getElementById('monitor-violations').value=current+1;showNotification('Violation logged','warning');awardPoints(10,'Violation Logged')}
+function exportFramework(type){const output=document.getElementById(`${type}-output`).innerText;const blob=new Blob([output],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${type}-${Date.now()}.txt`;a.click();URL.revokeObjectURL(url);showNotification('Exported successfully','success');awardPoints(10,'Exported')}
+
+function generateEarlyWarning(){const region=document.getElementById('warning-region').value;if(!region)return showNotification('Please specify region','warning');const indicators=[];if(document.getElementById('indicator-economic').checked)indicators.push('Economic instability');if(document.getElementById('indicator-political').checked)indicators.push('Political tensions');if(document.getElementById('indicator-social').checked)indicators.push('Social unrest');if(document.getElementById('indicator-resource').checked)indicators.push('Resource scarcity');if(document.getElementById('indicator-displacement').checked)indicators.push('Population displacement');const threat=document.getElementById('warning-threat').value;const timeframe=document.getElementById('warning-timeframe').value;const threatColors={low:'var(--success)',medium:'var(--warning)',high:'var(--danger)',critical:'#991b1b'};const timeframes={immediate:'0-48 hours',short:'1-2 weeks',medium:'1-3 months',long:'3-12 months'};const riskScore=indicators.length*20+(threat==='low'?10:threat==='medium'?30:threat==='high'?60:90);document.getElementById('earlywarning-output').innerHTML=`<div class="tool-output"><h4>Early Warning Alert Generated</h4><div class="tool-output-section"><div class="tool-output-label">Region:</div><div class="tool-output-value">${region}</div></div><div class="tool-output-section"><div class="tool-output-label">Threat Level:</div><div class="tool-output-value" style="color:${threatColors[threat]};font-weight:700;text-transform:uppercase">${threat}</div></div><div class="tool-output-section"><div class="tool-output-label">Risk Score:</div><div class="tool-output-value">${riskScore}/100</div></div><div class="tool-output-section"><div class="tool-output-label">Identified Indicators:</div><div class="tool-output-value">${indicators.map(i=>`• ${i}`).join('<br>')}</div></div><div class="tool-output-section"><div class="tool-output-label">Estimated Timeframe:</div><div class="tool-output-value">${timeframes[timeframe]}</div></div><div class="tool-output-section"><div class="tool-output-label">Preventive Actions:</div><div class="tool-output-value">${threat==='critical'||threat==='high'?'🔴 <strong>Immediate:</strong><br>• Deploy crisis management team<br>• Activate emergency communication channels<br>• Engage diplomatic back channels<br>• Position humanitarian assets<br>• Alert international monitoring bodies':'🟡 <strong>Proactive:</strong><br>• Increase monitoring frequency<br>• Strengthen early dialogue mechanisms<br>• Engage with local peace committees<br>• Deploy conflict prevention specialists<br>• Prepare contingency response plans'}</div></div><div class="tool-output-section"><div class="tool-output-label">Key Stakeholders to Alert:</div><div class="tool-output-value">• UN Department of Political Affairs<br>• Regional peacekeeping missions<br>• Local civil society organizations<br>• International crisis response teams<br>• Humanitarian coordination hubs</div></div><button class="btn btn-primary" onclick="exportFramework('earlywarning')">Export Alert</button><button class="btn" onclick="escalateWarning()" style="margin-left:0.5rem">Escalate to Crisis Team</button></div>`;awardPoints(35,'Early Warning Generated');incrementAction()}
+
+function generateDialoguePlan(){const communities=document.getElementById('dialogue-communities').value;const cultural=document.getElementById('dialogue-cultural').value;if(!communities)return showNotification('Please specify communities','warning');const topics=document.getElementById('dialogue-topics').value||'General reconciliation';const approach=document.getElementById('dialogue-approach').value;const setting=document.getElementById('dialogue-setting').value;const approaches={restorative:'Restorative Justice - Focus on healing harm and rebuilding relationships',appreciative:'Appreciative Inquiry - Build on shared strengths and positive experiences',narrative:'Narrative Mediation - Explore and reframe conflicting stories',transformative:'Transformative Dialogue - Address root causes and power dynamics',interfaith:'Interfaith/Intercultural - Honor diverse spiritual and cultural traditions'};const settings={neutral:'Neutral Territory - Third-party location with no historical associations',rotating:'Rotating Locations - Alternate between community spaces to build trust',sacred:'Sacred/Symbolic Space - Location with spiritual or cultural significance',virtual:'Virtual/Hybrid - Online platform with in-person components'};document.getElementById('dialogue-output').innerHTML=`<div class="tool-output"><h4>Dialogue Facilitation Framework</h4><div class="tool-output-section"><div class="tool-output-label">Communities:</div><div class="tool-output-value">${communities}</div></div><div class="tool-output-section"><div class="tool-output-label">Facilitation Approach:</div><div class="tool-output-value">${approaches[approach]}</div></div><div class="tool-output-section"><div class="tool-output-label">Dialogue Setting:</div><div class="tool-output-value">${settings[setting]}</div></div><div class="tool-output-section"><div class="tool-output-label">Cultural Considerations:</div><div class="tool-output-value">${cultural||'General cross-cultural protocols apply'}</div></div><div class="tool-output-section"><div class="tool-output-label">Sensitive Topics:</div><div class="tool-output-value">${topics}</div></div><div class="tool-output-section"><div class="tool-output-label">Dialogue Protocol:</div><div class="tool-output-value"><strong>Phase 1: Preparation (2-4 weeks)</strong><br>• Conduct individual community consultations<br>• Identify cultural protocols and sensitivities<br>• Select trusted facilitators from both communities<br>• Establish ground rules collaboratively<br><br><strong>Phase 2: Initial Dialogue (1-2 sessions)</strong><br>• Create safe space with cultural rituals<br>• Share personal stories and experiences<br>• Practice deep listening without judgment<br>• Acknowledge pain and grievances<br><br><strong>Phase 3: Building Understanding (3-5 sessions)</strong><br>• Explore root causes of conflict<br>• Identify shared values and aspirations<br>• Address power imbalances openly<br>• Co-create vision for peaceful coexistence<br><br><strong>Phase 4: Action Planning (2-3 sessions)</strong><br>• Develop concrete reconciliation steps<br>• Establish accountability mechanisms<br>• Create joint community projects<br>• Plan ongoing dialogue processes</div></div><div class="tool-output-section"><div class="tool-output-label">Cultural Mediation Guidelines:</div><div class="tool-output-value">• Honor traditional conflict resolution practices<br>• Incorporate symbolic gestures of reconciliation<br>• Respect religious/spiritual dimensions<br>• Use culturally appropriate language and metaphors<br>• Allow time for reflection and ritual<br>• Include elders and respected community leaders<br>• Be mindful of gender dynamics and inclusion</div></div><div class="tool-output-section"><div class="tool-output-label">Success Indicators:</div><div class="tool-output-value">✓ Participants feel heard and respected<br>✓ New understanding of other's perspective<br>✓ Commitment to non-violence<br>✓ Joint problem-solving initiatives<br>✓ Regular communication channels established<br>✓ Community support for dialogue process</div></div><button class="btn btn-primary" onclick="exportFramework('dialogue')">Export Framework</button><button class="btn" onclick="scheduleDialogue()" style="margin-left:0.5rem">Schedule Session</button></div>`;awardPoints(40,'Dialogue Framework Created');incrementAction()}
+
+function escalateWarning(){showNotification('Alert escalated to Crisis Response Team','success');awardPoints(15,'Warning Escalated')}
+function scheduleDialogue(){showNotification('Dialogue session scheduled - invitations sent','success');awardPoints(15,'Dialogue Scheduled')}
+
+function generateRSSFeed(){const title=document.getElementById('rss-title-input').value;const rss=`<?xml version="1.0"?>
+<rss version="2.0">
+<channel>
+<title>${title}</title>
+<link>${window.location.href}</link>
+<description>Peace Dashboard Feed</description>
+</channel>
+</rss>`;document.getElementById('rss-output').innerHTML=`<div class="tool-output"><h4>RSS Generated</h4><pre style="background:var(--surface-alt);padding:1rem;border-radius:6px;overflow-x:auto;font-size:0.75rem">${rss}</pre><button class="btn btn-primary" onclick="downloadRSS(\`${rss}\`)" style="margin-top:1rem">Download</button></div>`;awardPoints(20,'RSS Generated')}
+function downloadRSS(content){const blob=new Blob([content],{type:'application/rss+xml'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`feed-${Date.now()}.rss`;a.click();URL.revokeObjectURL(url);showNotification('Downloaded','success')}
+
+function copyRSSUrl(){const url=`${window.location.href}/feed.rss`;navigator.clipboard.writeText(url).then(()=>{showNotification('RSS URL copied to clipboard','success')})}
+
+const PeaceAnalyzer={peaceKeywords:['ceasefire','peace','dialogue','reconciliation','cooperation','humanitarian','aid','treaty','agreement','resolution','diplomacy','mediation','harmony','stability','reconstruction','development','unity','collaboration','understanding','compromise'],collapseKeywords:['war','conflict','violence','attack','escalation','crisis','bombing','casualties','invasion','destruction','sanctions','threat','weapons','nuclear','militant','extremist','terror','blockade','siege','displacement'],neutralKeywords:['meeting','discussion','statement','report','analysis','update','monitoring','observation','assessment','review'],
+analyzeSentiment(text){const lower=text.toLowerCase();let peaceScore=0;let collapseScore=0;let neutralScore=0;this.peaceKeywords.forEach(kw=>{const count=(lower.match(new RegExp(kw,'g'))||[]).length;peaceScore+=count*2});this.collapseKeywords.forEach(kw=>{const count=(lower.match(new RegExp(kw,'g'))||[]).length;collapseScore+=count*2});this.neutralKeywords.forEach(kw=>{const count=(lower.match(new RegExp(kw,'g'))||[]).length;neutralScore+=count});const total=peaceScore+collapseScore+neutralScore||1;const peacePct=(peaceScore/total)*100;const collapsePct=(collapseScore/total)*100;const netScore=peacePct-collapsePct;return{peaceScore:Math.round(peacePct),collapseScore:Math.round(collapsePct),netScore:Math.round(netScore),sentiment:netScore>20?'peace':netScore<-20?'collapse':'neutral'}},
+analyzeMultiple(items){const analyses=items.map(item=>({...item,analysis:this.analyzeSentiment(item.title+' '+item.description)}));const avgNet=analyses.reduce((sum,a)=>sum+a.analysis.netScore,0)/analyses.length;return{items:analyses,overallScore:Math.round(avgNet),overallSentiment:avgNet>20?'peace':avgNet<-20?'collapse':'neutral'}}};
+
+async function generateRSSFeed(){const title=document.getElementById('rss-title-input').value;const includeAlerts=document.getElementById('rss-alerts').checked;const includeMetrics=document.getElementById('rss-metrics').checked;const includeActivities=document.getElementById('rss-activities').checked;const useLLM=document.getElementById('rss-llm-analyze').checked;const btn=document.getElementById('rss-generate-btn');btn.disabled=true;btn.innerHTML='<span class="loading"></span> Analyzing...';const items=[];if(includeAlerts){items.push({title:'Priority Alert: Conflict escalation detected in monitored region',description:'High priority alert requiring immediate attention and diplomatic intervention',pubDate:new Date().toUTCString()},{title:'Aid Delivery Successfully Completed',description:'Humanitarian corridor facilitated safe passage for essential supplies to affected communities',pubDate:new Date(Date.now()-3600000).toUTCString()})}if(includeMetrics){items.push({title:'Peace Metrics Update',description:`Active Conflicts: ${AppState.metrics.conflicts} | Aid Corridors: ${AppState.metrics.corridors} | Peace Talks: ${AppState.metrics.talks} showing positive trends`,pubDate:new Date(Date.now()-7200000).toUTCString()})}if(includeActivities){items.push({title:'New Peace Talk Scheduled in Geneva',description:'Regional mediators to facilitate dialogue between conflict parties with neutral arbitration',pubDate:new Date(Date.now()-10800000).toUTCString()},{title:'Ceasefire Compliance Reaches 72 Hours',description:'Monitoring reports indicate sustained adherence to ceasefire terms across all zones',pubDate:new Date(Date.now()-14400000).toUTCString()})}let analysis=null;if(useLLM&&items.length>0){document.getElementById('llm-status').innerHTML='<span class="loading"></span> Running WebLLM analysis...';await new Promise(r=>setTimeout(r,800));analysis=PeaceAnalyzer.analyzeMultiple(items);document.getElementById('llm-status').innerHTML='✓ Analysis complete';renderPeaceNeedle(analysis)}const rssItems=items.map((item,i)=>{const itemAnalysis=analysis?analysis.items[i].analysis:null;return`<item>
+<title>${item.title}</title>
+<description>${item.description}${itemAnalysis?` [Peace Score: ${itemAnalysis.netScore>0?'+':''}${itemAnalysis.netScore}]`:''}</description>
+<pubDate>${item.pubDate}</pubDate>
+<guid isPermaLink="false">${Date.now()}-${i}</guid>${itemAnalysis?`
+<category>${itemAnalysis.sentiment}</category>
+<peacescore>${itemAnalysis.netScore}</peacescore>`:''}
+</item>`}).join('\n');const rss=`<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>${title}</title>
+<link>${window.location.href}</link>
+<description>Peace Dashboard Feed with AI-powered sentiment analysis</description>
+<language>en-us</language>
+<lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+<generator>Symbiote Dashboard with WebLLM</generator>${analysis?`
+<overallPeaceScore>${analysis.overallScore}</overallPeaceScore>
+<overallSentiment>${analysis.overallSentiment}</overallSentiment>`:``}
+<atom:link href="${window.location.href}/rss.xml" rel="self" type="application/rss+xml"/>
+${rssItems}
+</channel>
+</rss>`;document.getElementById('rss-output').innerHTML=`<div class="tool-output"><h4>RSS Feed Generated with Peace Analysis</h4>${analysis?`<div style="padding:1rem;background:var(--surface);border-radius:6px;margin-bottom:1rem"><strong>Overall Peace Score:</strong> <span style="color:${analysis.overallScore>0?'var(--success)':'var(--danger)'};font-weight:700">${analysis.overallScore>0?'+':''}${analysis.overallScore}</span> | <strong>Sentiment:</strong> <span style="text-transform:uppercase">${analysis.overallSentiment}</span></div>`:''}<pre style="background:var(--surface-alt);padding:1rem;border-radius:6px;overflow-x:auto;font-size:0.75rem;max-height:300px">${rss}</pre><button class="btn btn-primary" onclick="downloadRSS(\`${rss.replace(/`/g,'\\`')}\`)" style="margin-top:1rem">Download RSS</button><button class="btn" onclick="copyRSSUrl()" style="margin-left:0.5rem">Copy URL</button></div>`;btn.disabled=false;btn.innerHTML='Generate RSS';awardPoints(30,'RSS with Analysis Generated')}
+
+function renderPeaceNeedle(analysis){const container=document.getElementById('peace-needle-container');const score=analysis.overallScore;const angle=((score+100)/200)*180-90;const color=score>20?'var(--success)':score<-20?'var(--danger)':'var(--warning)';container.innerHTML=`<div class="peace-needle-gauge"><h4 style="text-align:center;margin-bottom:1.5rem;color:var(--primary)">Peace/Collapse Indicator</h4><div class="needle-container"><div class="needle-scale"></div><div class="needle-pointer" style="transform:translateX(-50%) rotate(${angle}deg);background:${color}"></div><div class="needle-center"></div></div><div class="needle-labels"><span class="needle-label collapse">COLLAPSE</span><span class="needle-label peace">PEACE</span></div><div class="needle-score" style="color:${color}">${score>0?'+':''}${score}</div><div class="analysis-items">${analysis.items.map(item=>`<div class="analysis-item ${item.analysis.sentiment}"><div class="analysis-title"><span>${item.title}</span><span class="analysis-score">${item.analysis.netScore>0?'+':''}${item.analysis.netScore}</span></div><div style="font-size:0.875rem;color:var(--text-secondary)">${item.description.substring(0,120)}...</div></div>`).join('')}</div></div>`;awardPoints(25,'Peace Analysis Complete')}
+
+function saveSettings(){const keywords=document.getElementById('watchlist-keywords').value;AppState.watchlistKeywords=keywords.split(',').map(k=>k.trim()).filter(k=>k);saveToStorage();closeModal('settings-modal');showNotification('Settings saved','success')}
+function exportHTML(){const blob=new Blob([document.documentElement.outerHTML],{type:'text/html'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`dashboard-${Date.now()}.html`;a.click();URL.revokeObjectURL(url);closeModal('export-modal');showNotification('Exported','success')}
+function exportJSON(){const data={metadata:{exported:new Date().toISOString()},state:AppState};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`data-${Date.now()}.json`;a.click();URL.revokeObjectURL(url);closeModal('export-modal');showNotification('Exported','success')}
+
+function toggleGamification(){document.getElementById('gamification-panel').classList.toggle('expanded')}
+function awardPoints(points,reason){GamificationState.points+=points;GamificationState.history.push({points,reason,timestamp:new Date().toISOString()});updateGamificationDisplay();checkLevelUp();saveGamificationState()}
+function incrementAction(){GamificationState.actions++;updateGamificationDisplay();saveGamificationState()}
+function updateGamificationDisplay(){document.getElementById('total-points').textContent=GamificationState.points;document.getElementById('gam-points').textContent=GamificationState.points;document.getElementById('gam-level').textContent=GamificationState.level;document.getElementById('gam-actions').textContent=GamificationState.actions;const progress=(GamificationState.points%100)/100*100;document.getElementById('gam-progress-bar').style.width=`${progress}%`}
+function checkLevelUp(){if(GamificationState.points>=GamificationState.level*100){GamificationState.level++;showNotification(`Level Up! Level ${GamificationState.level}`,'success')}}
+function shareProgress(){const message=`Level ${GamificationState.level} | ${GamificationState.points} points | ${GamificationState.actions} actions`;if(navigator.share){navigator.share({title:'My Progress',text:message})}else{navigator.clipboard.writeText(message);showNotification('Copied to clipboard','success')}}
+
+function saveToStorage(){try{localStorage.setItem('appState',JSON.stringify(AppState))}catch(e){}}
+function loadFromStorage(){try{const saved=localStorage.getItem('appState');if(saved)Object.assign(AppState,JSON.parse(saved))}catch(e){}}
+function saveGamificationState(){try{localStorage.setItem('gamState',JSON.stringify(GamificationState))}catch(e){}}
+function loadGamificationState(){try{const saved=localStorage.getItem('gamState');if(saved){Object.assign(GamificationState,JSON.parse(saved));updateGamificationDisplay()}}catch(e){}}
+
+function refreshNewsFeeds(){showNotification('Refreshing feeds...','info');setTimeout(()=>{populateNewsFeeds();showNotification('Updated','success')},1000)}
+function refreshPeaceMetrics(){showNotification('Updating metrics...','info');setTimeout(()=>{populateConflictZones();populateHumanitarianStatus();showNotification('Updated','success')},1000)}
+
+function showNotification(message,type='info'){const notification=document.createElement('div');notification.className=`alert alert-${type}`;notification.style.cssText='position:fixed;top:80px;right:20px;z-index:9999;min-width:300px';notification.innerHTML=`<span>${type==='success'?'✓':'ℹ️'}</span><div>${message}</div>`;document.body.appendChild(notification);setTimeout(()=>notification.remove(),3000)}
+
+function registerServiceWorker(){if('serviceWorker'in navigator){const swCode=`self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;const blob=new Blob([swCode],{type:'application/javascript'});const swUrl=URL.createObjectURL(blob);navigator.serviceWorker.register(swUrl).catch(()=>{})}}
+
+console.log('🌐 Symbiote Dashboard loaded');
+</script>
+
+<!-- Zero-Harm Notice -->
+<!--
+This tool is designed for peace-building and humanitarian coordination only.
+Prohibited: Surveillance, weapons targeting, harm to individuals or communities.
+License: MIT | Intended Use: Regenerative, restorative applications only
+-->
+
+</body>
+</html>

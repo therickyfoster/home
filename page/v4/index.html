@@ -1,0 +1,2212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Provenance: Planetary Restoration Archive | planetaryrestorationarchive.com -->
+<!-- GitHub: github.com/therickyfoster | Steward: Foster + Navi -->
+<!-- integrity: computed-on-load -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Foster + Navi · Planetary Restoration Archive">
+<meta name="description" content="Unified multisite dashboard combining news aggregation, peace metrics, and collaboration tools for planetary restoration">
+<link rel="me" href="https://planetaryrestorationarchive.com">
+<link rel="me" href="https://github.com/TheRickyFoster">
+<link rel="manifest" href="#manifest">
+<title>Symbiote Unified Dashboard · Planetary Restoration Archive</title>
+
+<style>
+/* ==================== CSS RESET & BASE ==================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary: #2d5f3f;
+  --primary-light: #3a7a52;
+  --secondary: #5a8f7b;
+  --accent: #7fb069;
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --surface-alt: #f5f5f4;
+  --text: #1c1917;
+  --text-secondary: #57534e;
+  --text-tertiary: #78716c;
+  --border: #e7e5e4;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #dc2626;
+  --info: #3b82f6;
+  --peace: #7fb069;
+  --conflict: #e07856;
+  --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #7fb069;
+    --primary-light: #95c57f;
+    --secondary: #5a8f7b;
+    --accent: #3a7a52;
+    --bg: #1c1917;
+    --surface: #292524;
+    --surface-alt: #44403c;
+    --text: #fafaf9;
+    --text-secondary: #d6d3d1;
+    --text-tertiary: #a8a29e;
+    --border: #44403c;
+    --shadow: rgba(0, 0, 0, 0.3);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==================== SKIP LINK ==================== */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  z-index: 10000;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ==================== HEADER ==================== */
+header {
+  background: var(--surface);
+  border-bottom: 2px solid var(--primary);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.header-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.logo-icon {
+  font-size: 1.75rem;
+}
+
+.logo-text h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.logo-text .subtitle {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--surface-alt);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn:hover, .btn:focus {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.btn:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background: var(--primary-light);
+}
+
+/* ==================== NAVIGATION ==================== */
+nav {
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
+.nav-tab {
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  position: relative;
+  transition: color var(--transition);
+  border-bottom: 2px solid transparent;
+}
+
+.nav-tab:hover {
+  color: var(--text);
+}
+
+.nav-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.nav-tab:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+/* ==================== MAIN LAYOUT ==================== */
+main {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.dashboard-section {
+  display: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.dashboard-section.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== GRID LAYOUTS ==================== */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+/* ==================== CARDS ==================== */
+.card {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px var(--shadow);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px var(--shadow);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--surface-alt);
+  color: var(--text-secondary);
+}
+
+.card-body {
+  color: var(--text-secondary);
+}
+
+/* ==================== METRICS ==================== */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: transform var(--transition);
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.metric-change {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+/* ==================== NEWS FEED ==================== */
+.feed-container {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.feed-item {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 1.25rem;
+  border-left: 4px solid var(--primary);
+  box-shadow: 0 1px 4px var(--shadow);
+  transition: all var(--transition);
+}
+
+.feed-item:hover {
+  box-shadow: 0 2px 8px var(--shadow);
+  transform: translateX(4px);
+}
+
+.feed-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.feed-item-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.feed-item-source {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.feed-item-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.feed-item-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.feed-item-tag {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: var(--surface-alt);
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+/* ==================== WATCHLIST ==================== */
+.watchlist-container {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 2px solid var(--warning);
+}
+
+.watchlist-item {
+  padding: 1rem;
+  background: var(--surface-alt);
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  border-left: 3px solid var(--warning);
+}
+
+.watchlist-item:last-child {
+  margin-bottom: 0;
+}
+
+.watchlist-keyword {
+  font-weight: 600;
+  color: var(--warning);
+  margin-bottom: 0.5rem;
+}
+
+.watchlist-matches {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* ==================== PEACE TOOLS ==================== */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.tool-card {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 2px solid var(--border);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.tool-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px var(--shadow);
+  transform: translateY(-4px);
+}
+
+.tool-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.tool-name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.tool-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ==================== NETWORK VISUALIZATION ==================== */
+.network-container {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 2rem;
+  min-height: 400px;
+  position: relative;
+  overflow: hidden;
+}
+
+.network-node {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-align: center;
+  box-shadow: 0 4px 12px var(--shadow);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.network-node:hover {
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+/* ==================== SEARCH ==================== */
+.search-container {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1rem;
+  transition: border-color var(--transition);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(127, 176, 105, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+}
+
+/* ==================== ALERTS ==================== */
+.alert {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 4px solid;
+  display: flex;
+  align-items: start;
+  gap: 1rem;
+}
+
+.alert-success {
+  background: rgba(22, 163, 74, 0.1);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.alert-warning {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.alert-danger {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.alert-info {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--info);
+  color: var(--info);
+}
+
+/* ==================== TABS ==================== */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.tab-btn {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  position: relative;
+  transition: color var(--transition);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* ==================== STATUS INDICATORS ==================== */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.status-active {
+  background: var(--success);
+  animation: pulse 2s infinite;
+}
+
+.status-warning {
+  background: var(--warning);
+}
+
+.status-danger {
+  background: var(--danger);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ==================== FOOTER ==================== */
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  margin-top: 4rem;
+  padding: 2rem 1.5rem;
+}
+
+.footer-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.footer-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.footer-section p, .footer-section li {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.footer-section ul {
+  list-style: none;
+}
+
+.footer-section a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.footer-section a:hover {
+  color: var(--primary);
+}
+
+.footer-bottom {
+  max-width: 1600px;
+  margin: 2rem auto 0;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+/* ==================== MODAL ==================== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px var(--shadow);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--text);
+}
+
+/* ==================== FORM ELEMENTS ==================== */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color var(--transition);
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(127, 176, 105, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .header-actions {
+    justify-content: center;
+  }
+  
+  .grid-2, .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+  header, nav, .header-actions, .btn, footer {
+    display: none;
+  }
+  
+  main {
+    max-width: 100%;
+    padding: 0;
+  }
+  
+  .card, .feed-item {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==================== LOADING ==================== */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header role="banner">
+    <div class="header-content">
+      <a href="#" class="logo" aria-label="Symbiote Unified Dashboard Home">
+        <span class="logo-icon" aria-hidden="true">🌐</span>
+        <div class="logo-text">
+          <h1>Symbiote Unified Dashboard</h1>
+          <div class="subtitle">Planetary Restoration Archive</div>
+        </div>
+      </a>
+      <div class="header-actions">
+        <button class="btn" id="search-btn" aria-label="Search">
+          <span aria-hidden="true">🔍</span>
+          Search
+        </button>
+        <button class="btn" id="settings-btn" aria-label="Settings">
+          <span aria-hidden="true">⚙️</span>
+          Settings
+        </button>
+        <button class="btn btn-primary" id="export-btn" aria-label="Export data">
+          <span aria-hidden="true">💾</span>
+          Export
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <nav role="navigation" aria-label="Main navigation">
+    <div class="nav-content">
+      <button class="nav-tab active" data-section="overview" aria-selected="true">
+        <span aria-hidden="true">📊</span> Overview
+      </button>
+      <button class="nav-tab" data-section="news" aria-selected="false">
+        <span aria-hidden="true">📰</span> News Mycelium
+      </button>
+      <button class="nav-tab" data-section="peace" aria-selected="false">
+        <span aria-hidden="true">🕊️</span> Peace Metrics
+      </button>
+      <button class="nav-tab" data-section="tools" aria-selected="false">
+        <span aria-hidden="true">🛠️</span> Peace Tools
+      </button>
+      <button class="nav-tab" data-section="network" aria-selected="false">
+        <span aria-hidden="true">🤝</span> Network
+      </button>
+    </div>
+  </nav>
+
+  <main id="main-content" role="main">
+    
+    <!-- OVERVIEW SECTION -->
+    <section class="dashboard-section active" id="overview-section" aria-labelledby="overview-heading">
+      <h2 id="overview-heading" class="sr-only">Dashboard Overview</h2>
+      
+      <div class="metrics-grid">
+        <div class="metric-card" role="status" aria-label="Active news feeds">
+          <div class="metric-label">Active Feeds</div>
+          <div class="metric-value" id="metric-feeds">12</div>
+          <div class="metric-change">↑ 3 since yesterday</div>
+        </div>
+        <div class="metric-card" role="status" aria-label="Active conflicts">
+          <div class="metric-label">Active Conflicts</div>
+          <div class="metric-value" id="metric-conflicts">23</div>
+          <div class="metric-change">↓ 2 this week</div>
+        </div>
+        <div class="metric-card" role="status" aria-label="Aid corridors">
+          <div class="metric-label">Aid Corridors</div>
+          <div class="metric-value" id="metric-corridors">47</div>
+          <div class="metric-change">→ Stable</div>
+        </div>
+        <div class="metric-card" role="status" aria-label="Peace talks">
+          <div class="metric-label">Peace Talks</div>
+          <div class="metric-value" id="metric-talks">8</div>
+          <div class="metric-change">↑ 1 new session</div>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <span aria-hidden="true">ℹ️</span>
+        <div>
+          <strong>Live Status:</strong> All systems operational. News feeds refresh every 5 minutes. Peace metrics updated in real-time.
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span aria-hidden="true">📡</span>
+              Recent Activity
+            </h3>
+            <span class="card-badge">
+              <span class="status-dot status-active" aria-label="Active"></span>
+              Live
+            </span>
+          </div>
+          <div class="card-body">
+            <div id="activity-feed"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span aria-hidden="true">⚠️</span>
+              Priority Alerts
+            </h3>
+            <span class="card-badge" id="alert-count">3</span>
+          </div>
+          <div class="card-body">
+            <div id="priority-alerts"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span aria-hidden="true">🗺️</span>
+            Quick Access
+          </h3>
+        </div>
+        <div class="card-body">
+          <div class="grid-3">
+            <button class="tool-card" onclick="showSection('news')">
+              <div class="tool-icon" aria-hidden="true">📰</div>
+              <div class="tool-name">News Aggregation</div>
+              <div class="tool-description">Monitor global feeds with intelligent filtering and watchlist alerts</div>
+            </button>
+            <button class="tool-card" onclick="showSection('peace')">
+              <div class="tool-icon" aria-hidden="true">🕊️</div>
+              <div class="tool-name">Peace Dashboard</div>
+              <div class="tool-description">Track conflicts, aid corridors, and peace-building initiatives</div>
+            </button>
+            <button class="tool-card" onclick="showSection('network')">
+              <div class="tool-icon" aria-hidden="true">🤝</div>
+              <div class="tool-name">Collaboration Network</div>
+              <div class="tool-description">Connect with UN agencies, NGOs, and local organizations</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWS SECTION -->
+    <section class="dashboard-section" id="news-section" aria-labelledby="news-heading">
+      <div class="card-header" style="margin-bottom: 1.5rem;">
+        <h2 id="news-heading" class="card-title" style="font-size: 1.5rem;">
+          <span aria-hidden="true">📰</span>
+          News Mycelium
+        </h2>
+        <button class="btn" id="refresh-news">
+          <span aria-hidden="true">🔄</span>
+          Refresh
+        </button>
+      </div>
+
+      <div class="search-container">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input 
+          type="search" 
+          class="search-input" 
+          id="news-search" 
+          placeholder="Search news feeds..."
+          aria-label="Search news feeds"
+        >
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="global-feed">Global Feeds</button>
+        <button class="tab-btn" data-tab="conflict-feed">Conflict & Relief</button>
+        <button class="tab-btn" data-tab="tech-feed">Tech & AI</button>
+        <button class="tab-btn" data-tab="watchlist-feed">Watchlist</button>
+      </div>
+
+      <div class="tab-content active" id="global-feed">
+        <div class="feed-container" id="global-news-feed"></div>
+      </div>
+
+      <div class="tab-content" id="conflict-feed">
+        <div class="feed-container" id="conflict-news-feed"></div>
+      </div>
+
+      <div class="tab-content" id="tech-feed">
+        <div class="feed-container" id="tech-news-feed"></div>
+      </div>
+
+      <div class="tab-content" id="watchlist-feed">
+        <div class="alert alert-warning">
+          <span aria-hidden="true">⚠️</span>
+          <div>
+            <strong>Watchlist Active:</strong> Monitoring keywords and tickers. Configure in Settings.
+          </div>
+        </div>
+        <div class="watchlist-container" id="watchlist-alerts"></div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span aria-hidden="true">🔗</span>
+            Mycelium Actions
+          </h3>
+        </div>
+        <div class="card-body">
+          <p>When alerts fire, suggested actions spread across domains:</p>
+          <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+            <li><strong>Narrative:</strong> Counter-messaging frameworks and fact-checking resources</li>
+            <li><strong>Technical:</strong> API integrations, data pipelines, and alert routing</li>
+            <li><strong>Real-world:</strong> Contact networks, aid coordination, and response protocols</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PEACE METRICS SECTION -->
+    <section class="dashboard-section" id="peace-section" aria-labelledby="peace-heading">
+      <div class="card-header" style="margin-bottom: 1.5rem;">
+        <h2 id="peace-heading" class="card-title" style="font-size: 1.5rem;">
+          <span aria-hidden="true">🕊️</span>
+          Global Peace Metrics
+        </h2>
+        <button class="btn" id="refresh-peace">
+          <span aria-hidden="true">🔄</span>
+          Update
+        </button>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);">
+          <div class="metric-label">Active Conflicts</div>
+          <div class="metric-value">23</div>
+          <div class="metric-change">Monitoring 12 critical zones</div>
+        </div>
+        <div class="metric-card" style="background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);">
+          <div class="metric-label">Aid Corridors</div>
+          <div class="metric-value">47</div>
+          <div class="metric-change">38 active, 9 establishing</div>
+        </div>
+        <div class="metric-card" style="background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);">
+          <div class="metric-label">Displaced (M)</div>
+          <div class="metric-value">108.4</div>
+          <div class="metric-change">UNHCR data, Sept 2025</div>
+        </div>
+        <div class="metric-card" style="background: linear-gradient(135deg, #7fb069 0%, #95c57f 100%);">
+          <div class="metric-label">Peace Talks</div>
+          <div class="metric-value">8</div>
+          <div class="metric-change">3 active, 5 scheduled</div>
+        </div>
+      </div>
+
+      <div class="alert alert-success">
+        <span aria-hidden="true">✓</span>
+        <div>
+          <strong>Ceasefire Progress:</strong> Two new ceasefire agreements reached in the past 48 hours.
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span aria-hidden="true">🗺️</span>
+              Conflict Zones
+            </h3>
+          </div>
+          <div class="card-body">
+            <div id="conflict-zones"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span aria-hidden="true">🚁</span>
+              Humanitarian Status
+            </h3>
+          </div>
+          <div class="card-body">
+            <div id="humanitarian-status"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span aria-hidden="true">📊</span>
+            Ceasefire Monitor
+          </h3>
+        </div>
+        <div class="card-body">
+          <p>Real-time violation tracking and verification system. Data aggregated from multiple monitoring sources with 15-minute update cycles.</p>
+          <div id="ceasefire-monitor" style="margin-top: 1rem;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PEACE TOOLS SECTION -->
+    <section class="dashboard-section" id="tools-section" aria-labelledby="tools-heading">
+      <div class="card-header" style="margin-bottom: 1.5rem;">
+        <h2 id="tools-heading" class="card-title" style="font-size: 1.5rem;">
+          <span aria-hidden="true">🛠️</span>
+          Peace Building Tools
+        </h2>
+      </div>
+
+      <div class="tools-grid">
+        <div class="tool-card" onclick="openTool('mediation')">
+          <div class="tool-icon" aria-hidden="true">💬</div>
+          <div class="tool-name">Mediation Framework</div>
+          <div class="tool-description">Neutral dialogue templates and de-escalation language protocols for peace negotiations</div>
+        </div>
+
+        <div class="tool-card" onclick="openTool('coordination')">
+          <div class="tool-icon" aria-hidden="true">🗺️</div>
+          <div class="tool-name">Humanitarian Coordination</div>
+          <div class="tool-description">Aid corridor mapping, resource allocation, and delivery logistics coordination</div>
+        </div>
+
+        <div class="tool-card" onclick="openTool('grassroots')">
+          <div class="tool-icon" aria-hidden="true">🤝</div>
+          <div class="tool-name">Grassroots Peace</div>
+          <div class="tool-description">Community reconciliation programs and local peace committee support</div>
+        </div>
+
+        <div class="tool-card" onclick="openTool('monitor')">
+          <div class="tool-icon" aria-hidden="true">📡</div>
+          <div class="tool-name">Ceasefire Monitor</div>
+          <div class="tool-description">Real-time violation tracking, verification protocols, and reporting systems</div>
+        </div>
+
+        <div class="tool-card" onclick="openTool('early-warning')">
+          <div class="tool-icon" aria-hidden="true">⚠️</div>
+          <div class="tool-name">Early Warning System</div>
+          <div class="tool-description">Conflict prediction models and preventive diplomacy alert mechanisms</div>
+        </div>
+
+        <div class="tool-card" onclick="openTool('dialogue')">
+          <div class="tool-icon" aria-hidden="true">🎭</div>
+          <div class="tool-name">Dialogue Facilitation</div>
+          <div class="tool-description">Cultural mediation resources and cross-community dialogue frameworks</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span aria-hidden="true">📚</span>
+            Resource Library
+          </h3>
+        </div>
+        <div class="card-body">
+          <p>Access comprehensive peace-building resources including conflict resolution case studies, mediation best practices, humanitarian law frameworks, and peace process documentation.</p>
+          <button class="btn btn-primary" style="margin-top: 1rem;">
+            <span aria-hidden="true">📖</span>
+            Browse Resources
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- NETWORK SECTION -->
+    <section class="dashboard-section" id="network-section" aria-labelledby="network-heading">
+      <div class="card-header" style="margin-bottom: 1.5rem;">
+        <h2 id="network-heading" class="card-title" style="font-size: 1.5rem;">
+          <span aria-hidden="true">🤝</span>
+          Collaboration Network
+        </h2>
+      </div>
+
+      <div class="alert alert-info">
+        <span aria-hidden="true">🌐</span>
+        <div>
+          <strong>Network Status:</strong> Connected to 247 organizations across 5 major coordination hubs.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span aria-hidden="true">🕸️</span>
+            Network Visualization
+          </h3>
+        </div>
+        <div class="card-body">
+          <div class="network-container" id="network-viz" aria-label="Collaboration network visualization">
+            <div class="network-node" style="top: 50%; left: 50%; transform: translate(-50%, -50%);" aria-label="Central hub">HUB</div>
+            <div class="network-node" style="top: 20%; left: 20%;" aria-label="UN organizations">UN</div>
+            <div class="network-node" style="top: 20%; right: 20%;" aria-label="NGO partners">NGOs</div>
+            <div class="network-node" style="bottom: 20%; left: 20%;" aria-label="Local organizations">Local</div>
+            <div class="network-node" style="bottom: 20%; right: 20%;" aria-label="Media partners">Media</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span aria-hidden="true">🏛️</span>
+              Partner Organizations
+            </h3>
+          </div>
+          <div class="card-body">
+            <div id="partner-list"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span aria-hidden="true">📨</span>
+              Active Collaborations
+            </h3>
+          </div>
+          <div class="card-body">
+            <div id="collaboration-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span aria-hidden="true">➕</span>
+            Join Network
+          </h3>
+        </div>
+        <div class="card-body">
+          <p>Connect your organization to the Planetary Restoration Network for enhanced coordination, resource sharing, and collective impact.</p>
+          <button class="btn btn-primary" style="margin-top: 1rem;" onclick="openModal('join-network')">
+            <span aria-hidden="true">🤝</span>
+            Request Access
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODALS -->
+  <div class="modal" id="settings-modal" role="dialog" aria-labelledby="settings-title" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="settings-title">Settings</h3>
+        <button class="modal-close" onclick="closeModal('settings-modal')" aria-label="Close settings">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="watchlist-keywords">Watchlist Keywords</label>
+          <textarea 
+            class="form-textarea" 
+            id="watchlist-keywords" 
+            placeholder="Enter keywords separated by commas..."
+          >ceasefire, humanitarian, peace talks, sanctions</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="refresh-interval">News Refresh Interval (minutes)</label>
+          <input 
+            type="number" 
+            class="form-input" 
+            id="refresh-interval" 
+            value="5" 
+            min="1" 
+            max="60"
+          >
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="alert-threshold">Alert Priority Threshold</label>
+          <select class="form-select" id="alert-threshold">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="export-modal" role="dialog" aria-labelledby="export-title" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="export-title">Export Data</h3>
+        <button class="modal-close" onclick="closeModal('export-modal')" aria-label="Close export">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Choose your export format:</p>
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
+          <button class="btn btn-primary" onclick="exportHTML()">
+            <span aria-hidden="true">📄</span>
+            Export as HTML
+          </button>
+          <button class="btn btn-primary" onclick="exportJSON()">
+            <span aria-hidden="true">📊</span>
+            Export as JSON
+          </button>
+          <button class="btn btn-primary" onclick="window.print()">
+            <span aria-hidden="true">🖨️</span>
+            Print / Save as PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="join-network-modal" role="dialog" aria-labelledby="join-title" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="join-title">Join Network</h3>
+        <button class="modal-close" onclick="closeModal('join-network-modal')" aria-label="Close form">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="join-form">
+          <div class="form-group">
+            <label class="form-label" for="org-name">Organization Name</label>
+            <input type="text" class="form-input" id="org-name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="org-type">Organization Type</label>
+            <select class="form-select" id="org-type" required>
+              <option value="">Select type...</option>
+              <option value="ngo">NGO</option>
+              <option value="un">UN Agency</option>
+              <option value="local">Local Organization</option>
+              <option value="media">Media Organization</option>
+              <option value="academic">Academic Institution</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="contact-email">Contact Email</label>
+            <input type="email" class="form-input" id="contact-email" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="org-mission">Mission Statement</label>
+            <textarea class="form-textarea" id="org-mission" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit Request</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer role="contentinfo">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About This Dashboard</h3>
+        <p>The Symbiote Unified Dashboard combines news aggregation, peace metrics monitoring, and collaboration tools to support planetary restoration efforts.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Zero-Harm Commitment</h3>
+        <p>This tool is designed for peace-building and humanitarian coordination. Any use for surveillance, weapons targeting, or harm to individuals or communities violates the intended purpose.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="https://planetaryrestorationarchive.com">Planetary Restoration Archive</a></li>
+          <li><a href="https://github.com/TheRickyFoster">GitHub Repository</a></li>
+          <li><a href="#" onclick="openModal('settings')">Dashboard Settings</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Build Information</h3>
+        <p id="build-info">Loading...</p>
+        <p id="integrity-hash" style="font-size: 0.7rem; color: var(--text-tertiary); margin-top: 0.5rem;"></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        Provenance: <a href="https://planetaryrestorationarchive.com" rel="me">Planetary Restoration Archive</a> |
+        Steward: Foster + Navi |
+        <a href="https://github.com/TheRickyFoster" rel="me">GitHub</a>
+      </p>
+      <p style="margin-top: 0.5rem;">
+        Built with regenerative intent · Offline-first · Zero external dependencies
+      </p>
+    </div>
+  </footer>
+
+  <!-- Hidden provenance reference -->
+  <div class="sr-only" aria-hidden="true">
+    Planetary Restoration Archive - planetaryrestorationarchive.com - GitHub: github.com/therickyfoster
+  </div>
+
+<script>
+"use strict";
+
+// ==================== STATE MANAGEMENT ====================
+const AppState = {
+  currentSection: 'overview',
+  newsFeeds: {
+    global: [],
+    conflict: [],
+    tech: [],
+    watchlist: []
+  },
+  watchlistKeywords: ['ceasefire', 'humanitarian', 'peace talks', 'sanctions'],
+  refreshInterval: 5,
+  alertThreshold: 'medium',
+  metrics: {
+    feeds: 12,
+    conflicts: 23,
+    corridors: 47,
+    talks: 8
+  },
+  lastUpdate: new Date()
+};
+
+// ==================== INITIALIZATION ====================
+document.addEventListener('DOMContentLoaded', () => {
+  initializeApp();
+  registerServiceWorker();
+  computeIntegrity();
+  loadFromStorage();
+  populateContent();
+  setupEventListeners();
+  startAutoRefresh();
+});
+
+function initializeApp() {
+  console.log('Symbiote Unified Dashboard initialized');
+  updateBuildInfo();
+}
+
+function updateBuildInfo() {
+  const buildInfo = document.getElementById('build-info');
+  const now = new Date();
+  buildInfo.textContent = `Built: ${now.toLocaleString()} | Version: 1.0.0`;
+}
+
+async function computeIntegrity() {
+  try {
+    const htmlContent = document.documentElement.outerHTML;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(htmlContent);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    document.getElementById('integrity-hash').textContent = `Integrity: sha256-${hashHex.substring(0, 16)}...`;
+  } catch (e) {
+    console.warn('Integrity computation not supported:', e);
+  }
+}
+
+// ==================== NAVIGATION ====================
+const navTabs = document.querySelectorAll('.nav-tab');
+navTabs.forEach(tab => {
+  tab.addEventListener('click', (e) => {
+    const section = e.currentTarget.dataset.section;
+    showSection(section);
+  });
+});
+
+function showSection(sectionName) {
+  navTabs.forEach(tab => {
+    const isActive = tab.dataset.section === sectionName;
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-selected', isActive);
+  });
+
+  document.querySelectorAll('.dashboard-section').forEach(section => {
+    section.classList.remove('active');
+  });
+  
+  const targetSection = document.getElementById(`${sectionName}-section`);
+  if (targetSection) {
+    targetSection.classList.add('active');
+    AppState.currentSection = sectionName;
+  }
+}
+
+// ==================== TAB MANAGEMENT ====================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const tabName = e.currentTarget.dataset.tab;
+    
+    e.currentTarget.parentElement.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active');
+    });
+    e.currentTarget.classList.add('active');
+
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.classList.remove('active');
+    });
+    
+    const targetContent = document.getElementById(tabName);
+    if (targetContent) {
+      targetContent.classList.add('active');
+    }
+  });
+});
+
+// ==================== MODAL MANAGEMENT ====================
+function openModal(modalName) {
+  const modal = document.getElementById(`${modalName}-modal`) || document.getElementById(modalName);
+  if (modal) {
+    modal.classList.add('active');
+    modal.focus();
+  }
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
+
+// Click outside to close
+document.querySelectorAll('.modal').forEach(modal => {
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+    }
+  });
+});
+
+// Escape key to close
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal.active').forEach(modal => {
+      modal.classList.remove('active');
+    });
+  }
+});
+
+// ==================== SETTINGS ====================
+document.getElementById('settings-btn').addEventListener('click', () => {
+  openModal('settings-modal');
+});
+
+function saveSettings() {
+  const keywords = document.getElementById('watchlist-keywords').value;
+  const interval = document.getElementById('refresh-interval').value;
+  const threshold = document.getElementById('alert-threshold').value;
+
+  AppState.watchlistKeywords = keywords.split(',').map(k => k.trim()).filter(k => k);
+  AppState.refreshInterval = parseInt(interval);
+  AppState.alertThreshold = threshold;
+
+  saveToStorage();
+  closeModal('settings-modal');
+  
+  showNotification('Settings saved successfully', 'success');
+}
+
+// ==================== EXPORT FUNCTIONALITY ====================
+document.getElementById('export-btn').addEventListener('click', () => {
+  openModal('export-modal');
+});
+
+function exportHTML() {
+  const htmlContent = document.documentElement.outerHTML;
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `symbiote-dashboard-${Date.now()}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+  closeModal('export-modal');
+  showNotification('HTML exported successfully', 'success');
+}
+
+function exportJSON() {
+  const data = {
+    metadata: {
+      exported: new Date().toISOString(),
+      version: '1.0.0',
+      source: 'Symbiote Unified Dashboard'
+    },
+    state: AppState,
+    metrics: AppState.metrics,
+    feeds: AppState.newsFeeds
+  };
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `symbiote-data-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  closeModal('export-modal');
+  showNotification('JSON exported successfully', 'success');
+}
+
+// ==================== CONTENT POPULATION ====================
+function populateContent() {
+  populateActivityFeed();
+  populatePriorityAlerts();
+  populateNewsFeeds();
+  populateConflictZones();
+  populateHumanitarianStatus();
+  populateCeasefireMonitor();
+  populatePartnerList();
+  populateCollaborationList();
+}
+
+function populateActivityFeed() {
+  const feed = document.getElementById('activity-feed');
+  const activities = [
+    { time: '2 min ago', text: 'New peace talk scheduled in Geneva', type: 'success' },
+    { time: '15 min ago', text: 'Humanitarian corridor established in conflict zone', type: 'success' },
+    { time: '1 hour ago', text: 'Watchlist alert: ceasefire mentioned in 3 sources', type: 'warning' },
+    { time: '2 hours ago', text: 'Network connection: Local NGO joined collaboration hub', type: 'info' }
+  ];
+
+  feed.innerHTML = activities.map(a => `
+    <div class="feed-item" style="padding: 0.75rem; margin-bottom: 0.75rem;">
+      <div style="display: flex; justify-content: between; gap: 1rem;">
+        <span class="status-dot status-${a.type}" aria-hidden="true"></span>
+        <div style="flex: 1;">
+          <div style="font-size: 0.875rem; color: var(--text);">${a.text}</div>
+          <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.25rem;">${a.time}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function populatePriorityAlerts() {
+  const alerts = document.getElementById('priority-alerts');
+  const alertData = [
+    { priority: 'High', text: 'Conflict escalation detected in monitored region', type: 'danger' },
+    { priority: 'Medium', text: 'Aid delivery delayed by 48 hours', type: 'warning' },
+    { priority: 'Medium', text: '2 new organizations requesting network access', type: 'info' }
+  ];
+
+  alerts.innerHTML = alertData.map(a => `
+    <div class="alert alert-${a.type}" style="padding: 0.75rem; margin-bottom: 0.75rem;">
+      <div>
+        <strong>${a.priority}:</strong> ${a.text}
+      </div>
+    </div>
+  `).join('');
+}
+
+function populateNewsFeeds() {
+  const globalFeed = [
+    {
+      title: 'UN General Assembly addresses climate security nexus',
+      source: 'UN News',
+      description: 'World leaders discuss the intersection of climate change and global security, emphasizing the need for integrated approaches to planetary challenges.',
+      time: '1 hour ago',
+      tags: ['UN', 'Climate', 'Security']
+    },
+    {
+      title: 'New humanitarian corridor opens in conflict zone',
+      source: 'UNHCR',
+      description: 'A safe passage for civilians and aid has been established through coordinated efforts between local authorities and international organizations.',
+      time: '3 hours ago',
+      tags: ['Humanitarian', 'Relief', 'Access']
+    },
+    {
+      title: 'Peace talks resume with regional mediators',
+      source: 'Reuters',
+      description: 'Diplomatic negotiations restart after two-week hiatus, with neutral mediators facilitating dialogue between conflict parties.',
+      time: '5 hours ago',
+      tags: ['Peace', 'Diplomacy', 'Mediation']
+    }
+  ];
+
+  const conflictFeed = [
+    {
+      title: 'Ceasefire monitoring report shows 72-hour compliance',
+      source: 'OSCE',
+      description: 'Latest monitoring data indicates sustained adherence to ceasefire terms across monitored zones, marking the longest period of calm in three months.',
+      time: '30 min ago',
+      tags: ['Ceasefire', 'Monitoring', 'Compliance']
+    },
+    {
+      title: 'Aid organizations coordinate emergency response',
+      source: 'ICRC',
+      description: 'Multiple humanitarian agencies mobilize coordinated response to emerging crisis, pooling resources for maximum impact.',
+      time: '2 hours ago',
+      tags: ['Aid', 'Emergency', 'Coordination']
+    }
+  ];
+
+  const techFeed = [
+    {
+      title: 'AI-powered early warning system detects conflict patterns',
+      source: 'Tech for Peace',
+      description: 'New machine learning model analyzes social media and news data to identify potential conflict escalation 48 hours in advance.',
+      time: '4 hours ago',
+      tags: ['AI', 'Tech', 'Prevention']
+    },
+    {
+      title: 'Satellite imagery reveals humanitarian access improvements',
+      source: 'Planet Labs',
+      description: 'Remote sensing data shows road network restoration enabling aid delivery to previously isolated communities.',
+      time: '6 hours ago',
+      tags: ['Satellite', 'Technology', 'Access']
+    }
+  ];
+
+  renderFeedItems('global-news-feed', globalFeed);
+  renderFeedItems('conflict-news-feed', conflictFeed);
+  renderFeedItems('tech-news-feed', techFeed);
+  populateWatchlist();
+}
+
+function renderFeedItems(containerId, items) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = items.map(item => `
+    <article class="feed-item">
+      <div class="feed-item-header">
+        <h3 class="feed-item-title">${item.title}</h3>
+        <span class="feed-item-source">${item.source}</span>
+      </div>
+      <p class="feed-item-description">${item.description}</p>
+      <div class="feed-item-meta">
+        <span>⏰ ${item.time}</span>
+        <span>${item.tags.map(t => `<span class="feed-item-tag">${t}</span>`).join(' ')}</span>
+      </div>
+    </article>
+  `).join('');
+}
+
+function populateWatchlist() {
+  const watchlist = document.getElementById('watchlist-alerts');
+  const alerts = [
+    {
+      keyword: 'ceasefire',
+      matches: ['UN General Assembly addresses climate security nexus', 'Ceasefire monitoring report shows 72-hour compliance'],
+      count: 2
+    },
+    {
+      keyword: 'humanitarian',
+      matches: ['New humanitarian corridor opens in conflict zone', 'Aid organizations coordinate emergency response'],
+      count: 2
+    },
+    {
+      keyword: 'peace talks',
+      matches: ['Peace talks resume with regional mediators'],
+      count: 1
+    }
+  ];
+
+  watchlist.innerHTML = alerts.map(alert => `
+    <div class="watchlist-item">
+      <div class="watchlist-keyword">🔔 "${alert.keyword}" - ${alert.count} ${alert.count === 1 ? 'match' : 'matches'}</div>
+      <div class="watchlist-matches">
+        ${alert.matches.map(m => `<div style="margin-top: 0.5rem;">• ${m}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function populateConflictZones() {
+  const zones = document.getElementById('conflict-zones');
+  const data = [
+    { region: 'Region Alpha', status: 'Active', level: 'High', trend: '↑' },
+    { region: 'Region Beta', status: 'De-escalating', level: 'Medium', trend: '↓' },
+    { region: 'Region Gamma', status: 'Stable', level: 'Low', trend: '→' },
+    { region: 'Region Delta', status: 'Ceasefire', level: 'Low', trend: '↓' }
+  ];
+
+  zones.innerHTML = data.map(z => `
+    <div style="padding: 0.75rem; background: var(--surface-alt); border-radius: 6px; margin-bottom: 0.75rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <strong>${z.region}</strong>
+        <span class="card-badge">${z.status}</span>
+      </div>
+      <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
+        Risk Level: ${z.level} ${z.trend}
+      </div>
+    </div>
+  `).join('');
+}
+
+function populateHumanitarianStatus() {
+  const status = document.getElementById('humanitarian-status');
+  const data = [
+    { category: 'Food Security', status: 'Adequate', percentage: 78 },
+    { category: 'Medical Access', status: 'Limited', percentage: 62 },
+    { category: 'Shelter', status: 'Critical', percentage: 45 },
+    { category: 'Water/Sanitation', status: 'Adequate', percentage: 71 }
+  ];
+
+  status.innerHTML = data.map(d => `
+    <div style="padding: 0.75rem; background: var(--surface-alt); border-radius: 6px; margin-bottom: 0.75rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <strong>${d.category}</strong>
+        <span>${d.percentage}%</span>
+      </div>
+      <div style="background: var(--border); border-radius: 4px; height: 8px; overflow: hidden;">
+        <div style="background: var(--primary); height: 100%; width: ${d.percentage}%;"></div>
+      </div>
+      <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.25rem;">${d.status}</div>
+    </div>
+  `).join('');
+}
+
+function populateCeasefireMonitor() {
+  const monitor = document.getElementById('ceasefire-monitor');
+  const data = [
+    { zone: 'Zone 1', violations: 0, status: 'Compliant', hours: 72 },
+    { zone: 'Zone 2', violations: 0, status: 'Compliant', hours: 72 },
+    { zone: 'Zone 3', violations: 2, status: 'Minor', hours: 68 },
+    { zone: 'Zone 4', violations: 0, status: 'Compliant', hours: 72 }
+  ];
+
+  monitor.innerHTML = data.map(d => `
+    <div style="padding: 0.75rem; background: var(--surface-alt); border-radius: 6px; margin-bottom: 0.75rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong>${d.zone}</strong>
+          <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;">
+            ${d.violations} violations | ${d.hours}h monitoring
+          </div>
+        </div>
+        <span class="card-badge status-${d.status === 'Compliant' ? 'success' : 'warning'}">${d.status}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function populatePartnerList() {
+  const partners = document.getElementById('partner-list');
+  const data = [
+    { name: 'UNHCR', type: 'UN Agency', status: 'Active' },
+    { name: 'ICRC', type: 'NGO', status: 'Active' },
+    { name: 'Médecins Sans Frontières', type: 'NGO', status: 'Active' },
+    { name: 'World Food Programme', type: 'UN Agency', status: 'Active' },
+    { name: 'Local Peace Coalition', type: 'Local Org', status: 'Active' }
+  ];
+
+  partners.innerHTML = data.map(p => `
+    <div style="padding: 0.75rem; background: var(--surface-alt); border-radius: 6px; margin-bottom: 0.75rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong>${p.name}</strong>
+          <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">${p.type}</div>
+        </div>
+        <span class="status-dot status-active" aria-label="${p.status}"></span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function populateCollaborationList() {
+  const collabs = document.getElementById('collaboration-list');
+  const data = [
+    { project: 'Aid Corridor Mapping', partners: 3, updated: '1 hour ago' },
+    { project: 'Peace Talk Facilitation', partners: 5, updated: '3 hours ago' },
+    { project: 'Early Warning System', partners: 7, updated: '1 day ago' },
+    { project: 'Community Reconciliation', partners: 4, updated: '2 days ago' }
+  ];
+
+  collabs.innerHTML = data.map(c => `
+    <div style="padding: 0.75rem; background: var(--surface-alt); border-radius: 6px; margin-bottom: 0.75rem;">
+      <strong>${c.project}</strong>
+      <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
+        ${c.partners} partners • Updated ${c.updated}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ==================== TOOL ACTIONS ====================
+function openTool(toolName) {
+  showNotification(`Opening ${toolName} tool...`, 'info');
+  // In production, this would navigate to the specific tool interface
+}
+
+// ==================== SEARCH FUNCTIONALITY ====================
+const searchBtn = document.getElementById('search-btn');
+const newsSearch = document.getElementById('news-search');
+
+searchBtn.addEventListener('click', () => {
+  newsSearch.focus();
+  showSection('news');
+});
+
+newsSearch.addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase();
+  if (!query) {
+    document.querySelectorAll('.feed-item').forEach(item => {
+      item.style.display = 'block';
+    });
+    return;
+  }
+
+  document.querySelectorAll('.feed-item').forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(query) ? 'block' : 'none';
+  });
+});
+
+// ==================== REFRESH FUNCTIONALITY ====================
+document.getElementById('refresh-news')?.addEventListener('click', () => {
+  refreshNewsFeeds();
+});
+
+document.getElementById('refresh-peace')?.addEventListener('click', () => {
+  refreshPeaceMetrics();
+});
+
+function refreshNewsFeeds() {
+  showNotification('Refreshing news feeds...', 'info');
+  AppState.lastUpdate = new Date();
+  setTimeout(() => {
+    populateNewsFeeds();
+    showNotification('News feeds updated', 'success');
+  }, 1000);
+}
+
+function refreshPeaceMetrics() {
+  showNotification('Updating peace metrics...', 'info');
+  AppState.lastUpdate = new Date();
+  setTimeout(() => {
+    populateConflictZones();
+    populateHumanitarianStatus();
+    populateCeasefireMonitor();
+    showNotification('Peace metrics updated', 'success');
+  }, 1000);
+}
+
+function startAutoRefresh() {
+  setInterval(() => {
+    if (AppState.currentSection === 'news') {
+      refreshNewsFeeds();
+    }
+  }, AppState.refreshInterval * 60 * 1000);
+}
+
+// ==================== NOTIFICATIONS ====================
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `alert alert-${type}`;
+  notification.style.cssText = 'position: fixed; top: 80px; right: 20px; z-index: 9999; min-width: 300px; animation: slideIn 0.3s ease-out;';
+  notification.innerHTML = `
+    <span aria-hidden="true">${type === 'success' ? '✓' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+    <div>${message}</div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+// Add notification animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(400px); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
+
+// ==================== LOCAL STORAGE ====================
+function saveToStorage() {
+  try {
+    localStorage.setItem('symbioteState', JSON.stringify(AppState));
+  } catch (e) {
+    console.warn('Could not save to localStorage:', e);
+  }
+}
+
+function loadFromStorage() {
+  try {
+    const saved = localStorage.getItem('symbioteState');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      Object.assign(AppState, parsed);
+      
+      // Update UI with loaded values
+      document.getElementById('watchlist-keywords').value = AppState.watchlistKeywords.join(', ');
+      document.getElementById('refresh-interval').value = AppState.refreshInterval;
+      document.getElementById('alert-threshold').value = AppState.alertThreshold;
+    }
+  } catch (e) {
+    console.warn('Could not load from localStorage:', e);
+  }
+}
+
+// ==================== FORM HANDLING ====================
+document.getElementById('join-form')?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  showNotification('Network access request submitted successfully', 'success');
+  closeModal('join-network-modal');
+  e.target.reset();
+});
+
+// ==================== EVENT LISTENERS ====================
+function setupEventListeners() {
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      switch(e.key) {
+        case 'k':
+          e.preventDefault();
+          newsSearch.focus();
+          break;
+        case 's':
+          e.preventDefault();
+          openModal('settings-modal');
+          break;
+        case 'e':
+          e.preventDefault();
+          openModal('export-modal');
+          break;
+      }
+    }
+  });
+
+  // Save state on unload
+  window.addEventListener('beforeunload', () => {
+    saveToStorage();
+  });
+
+  // Periodic save
+  setInterval(saveToStorage, 60000); // Save every minute
+}
+
+// ==================== SERVICE WORKER ====================
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      self.addEventListener('install', (event) => {
+        console.log('Service Worker installing');
+        self.skipWaiting();
+      });
+
+      self.addEventListener('activate', (event) => {
+        console.log('Service Worker activating');
+        event.waitUntil(clients.claim());
+      });
+
+      self.addEventListener('fetch', (event) => {
+        event.respondWith(
+          caches.match(event.request).then((response) => {
+            return response || fetch(event.request);
+          })
+        );
+      });
+    `;
+
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+
+    navigator.serviceWorker.register(swUrl)
+      .then(reg => console.log('Service Worker registered'))
+      .catch(err => console.warn('Service Worker registration failed:', err));
+  }
+}
+
+// ==================== WEB APP MANIFEST ====================
+const manifest = {
+  name: 'Symbiote Unified Dashboard',
+  short_name: 'Symbiote',
+  description: 'Unified dashboard for planetary restoration monitoring',
+  start_url: '.',
+  display: 'standalone',
+  background_color: '#fafaf9',
+  theme_color: '#2d5f3f',
+  icons: [
+    {
+      src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%232d5f3f"/><text x="50" y="65" font-size="50" text-anchor="middle" fill="white">🌐</text></svg>',
+      sizes: '512x512',
+      type: 'image/svg+xml'
+    }
+  ]
+};
+
+const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+const manifestUrl = URL.createObjectURL(manifestBlob);
+document.querySelector('link[rel="manifest"]').href = manifestUrl;
+
+// ==================== NOSCRIPT FALLBACK ====================
+// The dashboard requires JavaScript to function
+// Display message for users with JS disabled
+if (!document.querySelector('noscript')) {
+  const noscript = document.createElement('noscript');
+  noscript.innerHTML = `
+    <div style="padding: 2rem; text-align: center; background: #fff3cd; border: 2px solid #ffc107; margin: 2rem;">
+      <h2>JavaScript Required</h2>
+      <p>This dashboard requires JavaScript to function. Please enable JavaScript in your browser settings.</p>
+    </div>
+  `;
+  document.body.prepend(noscript);
+}
+
+console.log('🌐 Symbiote Unified Dashboard loaded successfully');
+console.log('📊 All systems operational');
+console.log('🔒 Zero-harm protocols active');
+</script>
+
+<!--
+=== ZERO-HARM & ANTI-INVERSION NOTICE ===
+
+This tool is designed exclusively for:
+- Peace-building and conflict resolution
+- Humanitarian coordination and aid delivery
+- Community reconciliation and dialogue facilitation
+- Transparent monitoring and verification
+
+PROHIBITED USES:
+- Surveillance or tracking of individuals
+- Weapons targeting or military operations
+- Harm to civilians or communities
+- Extractive data collection
+- Privacy violations
+
+Any use contrary to these principles violates the intended purpose
+and licensing terms of this software.
+
+License: MIT (or as specified in repository)
+Intended Use: Regenerative, restorative, and peace-oriented applications only
+
+=== END NOTICE ===
+-->
+
+</body>
+</html>

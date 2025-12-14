@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetary Restoration Archive - Guardian Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cosmic-deep: #0a0815;
+            --cosmic-mid: #1a1332;
+            --cosmic-accent: #2d2147;
+            --bio-primary: #2d5a27;
+            --bio-accent: #4a7c59;
+            --bio-light: #6db33f;
+            --stellar: #64ffda;
+            --stellar-warm: #ffd700;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c5d1;
+            --text-muted: #8a9ba8;
+            --xp-color: #ff6b35;
+            --badge-gold: #ffd700;
+            --badge-silver: #c0c0c0;
+            --badge-bronze: #cd7f32;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--cosmic-deep) 0%, var(--cosmic-mid) 50%, var(--cosmic-accent) 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Gamification HUD */
+        .game-hud {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 999;
+            background: rgba(26, 19, 50, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            width: 280px;
+            transition: all 0.3s ease;
+        }
+
+        .hud-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .guardian-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--stellar), var(--bio-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 15px;
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.4);
+        }
+
+        .guardian-info {
+            flex: 1;
+        }
+
+        .guardian-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: var(--stellar);
+            margin-bottom: 5px;
+        }
+
+        .guardian-level {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--badge-gold), var(--badge-bronze));
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--cosmic-deep);
+            margin-left: 5px;
+        }
+
+        /* Experience Bar */
+        .xp-container {
+            margin-bottom: 15px;
+        }
+
+        .xp-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .xp-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--xp-color), var(--stellar-warm));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 1s ease;
+            position: relative;
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+        }
+
+        .xp-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: 3px;
+        }
+
+        /* Stats Grid */
+        .hud-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--stellar);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Mission Tracker */
+        .mission-tracker {
+            margin-bottom: 15px;
+        }
+
+        .mission-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--stellar);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mission-count {
+            background: rgba(100, 255, 218, 0.2);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+
+        .mission-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mission-item:hover {
+            background: rgba(100, 255, 218, 0.1);
+            transform: translateX(5px);
+        }
+
+        .mission-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .mission-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+
+        .mission-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--bio-light), var(--stellar));
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        .mission-xp {
+            color: var(--xp-color);
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        /* Toggle Button */
+        .hud-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .hud-toggle:hover {
+            color: var(--stellar);
+            transform: rotate(180deg);
+        }
+
+        .game-hud.minimized {
+            width: 60px;
+            height: 60px;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .game-hud.minimized .hud-content {
+            display: none;
+        }
+
+        /* Leaderboard Popup */
+        .leaderboard-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(26, 19, 50, 0.98);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            width: 500px;
+            max-height: 600px;
+            overflow-y: auto;
+            z-index: 10000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .leaderboard-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--stellar), var(--stellar-warm));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .leaderboard-tab {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-tab.active {
+            background: linear-gradient(135deg, var(--stellar), var(--bio-light));
+            color: var(--cosmic-deep);
+            font-weight: 600;
+        }
+
+        .leaderboard-list {
+            list-style: none;
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-entry:hover {
+            background: rgba(100, 255, 218, 0.1);
+            transform: translateX(5px);
+        }
+
+        .leaderboard-rank {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            margin-right: 15px;
+            border-radius: 50%;
+        }
+
+        .rank-1 { background: linear-gradient(135deg, #ffd700, #ffed4e); color: #333; }
+        .rank-2 { background: linear-gradient(135deg, #c0c0c0, #e8e8e8); color: #333; }
+        .rank-3 { background: linear-gradient(135deg, #cd7f32, #da9e56); color: #333; }
+        .rank-other { background: rgba(255, 255, 255, 0.1); }
+
+        .leaderboard-player {
+            flex: 1;
+        }
+
+        .leaderboard-player-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+
+        .leaderboard-player-level {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .leaderboard-score {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--stellar);
+        }
+
+        .close-leaderboard {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .close-leaderboard:hover {
+            color: var(--stellar);
+            transform: rotate(90deg);
+        }
+
+        /* Achievement System */
+        .achievement-notification {
+            position: fixed;
+            bottom: -120px;
+            right: 20px;
+            background: linear-gradient(135deg, rgba(26, 19, 50, 0.98), rgba(45, 33, 71, 0.98));
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--stellar);
+            border-radius: 15px;
+            padding: 15px 20px 15px 80px;
+            width: 380px;
+            box-shadow: 0 10px 40px rgba(100, 255, 218, 0.3);
+            z-index: 10001;
+            transition: all 0.5s ease;
+        }
+
+        .achievement-notification.show {
+            bottom: 20px;
+            animation: achievementPulse 0.5s ease;
+        }
+
+        @keyframes achievementPulse {
+            0% { transform: scale(0.9); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .achievement-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--stellar), var(--stellar-warm));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.5);
+        }
+
+        .achievement-content {
+            color: var(--text-primary);
+        }
+
+        .achievement-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--stellar);
+            margin-bottom: 5px;
+        }
+
+        .achievement-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .achievement-reward {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .achievement-xp {
+            color: var(--xp-color);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .achievement-badge {
+            padding: 2px 8px;
+            background: linear-gradient(135deg, var(--badge-gold), var(--badge-bronze));
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--cosmic-deep);
+        }
+
+        /* Badge Collection */
+        .badge-collection {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 998;
+        }
+
+        .badge-slot {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(100, 255, 218, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .badge-slot.earned {
+            background: linear-gradient(135deg, var(--stellar), var(--bio-light));
+            border: none;
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.4);
+            animation: badgeEarned 0.5s ease;
+        }
+
+        @keyframes badgeEarned {
+            0% { transform: scale(0) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .badge-icon {
+            font-size: 24px;
+        }
+
+        /* Mission Complete Animation */
+        .mission-complete {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--stellar), var(--stellar-warm));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            z-index: 10002;
+            animation: missionComplete 2s ease;
+            pointer-events: none;
+        }
+
+        @keyframes missionComplete {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.2) rotate(10deg); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1) rotate(-5deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.8) rotate(0deg); opacity: 0; }
+        }
+
+        /* Existing styles continue below... */
+        
+        /* Animated background particles */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--stellar);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+            opacity: 0.7;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-100px) translateX(100px); opacity: 0; }
+        }
+
+        .bio-pulse {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--bio-light) 0%, transparent 70%);
+            animation: pulse 8s infinite ease-in-out;
+            opacity: 0.1;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.1; }
+            50% { transform: scale(1.2); opacity: 0.3; }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 0;
+            background: rgba(10, 8, 21, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--stellar);
+            text-decoration: none;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 8px;
+            height: 8px;
+            background: var(--bio-light);
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.5); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 8px 12px;
+        }
+
+        .nav-links a:hover {
+            color: var(--stellar);
+            transform: translateY(-1px);
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--stellar), var(--bio-light));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::before {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 40px;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--stellar) 0%, var(--bio-light) 50%, var(--stellar-warm) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            animation: glow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(100, 255, 218, 0.3)); }
+            to { filter: drop-shadow(0 0 40px rgba(109, 179, 63, 0.5)); }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 300;
+            margin-bottom: 40px;
+            color: var(--text-secondary);
+            max-width: 800px;
+            line-height: 1.4;
+        }
+
+        .hero-description {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .cta-primary, .cta-secondary {
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, var(--stellar) 0%, var(--bio-light) 100%);
+            color: var(--cosmic-deep);
+            border: none;
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(100, 255, 218, 0.3);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: var(--stellar);
+            border: 2px solid var(--stellar);
+        }
+
+        .cta-secondary:hover {
+            background: var(--stellar);
+            color: var(--cosmic-deep);
+            transform: translateY(-3px);
+        }
+
+        /* Sections */
+        .section {
+            padding: 120px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 600;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--stellar) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Grid Layouts */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: rgba(26, 19, 50, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(100, 255, 218, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(100, 255, 218, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--stellar);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .feature-link {
+            color: var(--bio-light);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-link:hover {
+            color: var(--stellar);
+            transform: translateX(5px);
+        }
+
+        /* Galaxy Map Section */
+        .galaxy-section {
+            background: radial-gradient(ellipse at center, rgba(45, 90, 39, 0.1) 0%, transparent 50%);
+            padding: 120px 40px;
+            position: relative;
+        }
+
+        .galaxy-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 600px;
+            position: relative;
+            border-radius: 20px;
+            background: rgba(10, 8, 21, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            overflow: hidden;
+        }
+
+        .galaxy-node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--stellar);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        .galaxy-node:hover {
+            transform: scale(1.5);
+            background: var(--stellar-warm);
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.8);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .galaxy-node.bio { background: var(--bio-light); }
+        .galaxy-node.innovation { background: var(--stellar); }
+        .galaxy-node.deployment { background: var(--stellar-warm); }
+
+        /* Footer */
+        .footer {
+            padding: 80px 40px 40px;
+            border-top: 1px solid rgba(100, 255, 218, 0.1);
+            background: rgba(10, 8, 21, 0.8);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--stellar);
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-hud {
+                left: 10px;
+                top: 70px;
+                width: 250px;
+            }
+
+            .leaderboard-popup {
+                width: 90%;
+                padding: 20px;
+            }
+
+            .achievement-notification {
+                width: 90%;
+                right: 5%;
+                padding-left: 70px;
+            }
+
+            .badge-collection {
+                bottom: 10px;
+                right: 10px;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--cosmic-deep);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--stellar);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--bio-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="cosmic-bg" id="cosmicBg"></div>
+
+    <!-- Gamification HUD -->
+    <div class="game-hud" id="gameHud">
+        <div class="hud-toggle" onclick="toggleHud()">⚙️</div>
+        <div class="hud-content">
+            <div class="hud-header">
+                <div class="guardian-avatar">🌍</div>
+                <div class="guardian-info">
+                    <div class="guardian-name">Guardian</div>
+                    <div class="guardian-level">
+                        Level <span id="userLevel">1</span>
+                        <span class="level-badge">Seedling</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="xp-container">
+                <div class="xp-label">Experience Progress</div>
+                <div class="xp-bar">
+                    <div class="xp-fill" id="xpBar"></div>
+                </div>
+                <div class="xp-text"><span id="currentXP">0</span> / <span id="maxXP">100</span> XP</div>
+            </div>
+
+            <div class="hud-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="restorationPoints">0</span>
+                    <span class="stat-label">Restoration Points</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="contributions">0</span>
+                    <span class="stat-label">Contributions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="badges">0</span>
+                    <span class="stat-label">Badges</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="streak">0</span>
+                    <span class="stat-label">Day Streak</span>
+                </div>
+            </div>
+
+            <div class="mission-tracker">
+                <div class="mission-title">
+                    Active Missions
+                    <span class="mission-count" id="missionCount">3</span>
+                </div>
+                <div id="missionsList">
+                    <div class="mission-item" onclick="completeMission(0)">
+                        <div>🌱 Plant First Seed</div>
+                        <div class="mission-progress">
+                            <div class="mission-bar">
+                                <div class="mission-bar-fill" style="width: 60%;"></div>
+                            </div>
+                            <span class="mission-xp">+50 XP</span>
+                        </div>
+                    </div>
+                    <div class="mission-item" onclick="completeMission(1)">
+                        <div>📚 Study Protocol</div>
+                        <div class="mission-progress">
+                            <div class="mission-bar">
+                                <div class="mission-bar-fill" style="width: 30%;"></div>
+                            </div>
+                            <span class="mission-xp">+75 XP</span>
+                        </div>
+                    </div>
+                    <div class="mission-item" onclick="completeMission(2)">
+                        <div>🤝 Join Network</div>
+                        <div class="mission-progress">
+                            <div class="mission-bar">
+                                <div class="mission-bar-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="mission-xp">+100 XP</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="cta-primary" style="width: 100%; margin-top: 10px;" onclick="showLeaderboard()">
+                🏆 View Leaderboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Leaderboard Popup -->
+    <div class="leaderboard-popup" id="leaderboardPopup">
+        <span class="close-leaderboard" onclick="hideLeaderboard()">×</span>
+        <div class="leaderboard-header">
+            <div class="leaderboard-title">Guardian Leaderboard</div>
+        </div>
+        <div class="leaderboard-tabs">
+            <div class="leaderboard-tab active" onclick="switchLeaderboardTab(this, 'global')">Global</div>
+            <div class="leaderboard-tab" onclick="switchLeaderboardTab(this, 'monthly')">Monthly</div>
+            <div class="leaderboard-tab" onclick="switchLeaderboardTab(this, 'friends')">Network</div>
+        </div>
+        <ul class="leaderboard-list" id="leaderboardList">
+            <li class="leaderboard-entry">
+                <div class="leaderboard-rank rank-1">1</div>
+                <div class="leaderboard-player">
+                    <div class="leaderboard-player-name">EcoChampion</div>
+                    <div class="leaderboard-player-level">Level 42 • Master Guardian</div>
+                </div>
+                <div class="leaderboard-score">15,420</div>
+            </li>
+            <li class="leaderboard-entry">
+                <div class="leaderboard-rank rank-2">2</div>
+                <div class="leaderboard-player">
+                    <div class="leaderboard-player-name">TerraNova</div>
+                    <div class="leaderboard-player-level">Level 38 • Elder</div>
+                </div>
+                <div class="leaderboard-score">14,200</div>
+            </li>
+            <li class="leaderboard-entry">
+                <div class="leaderboard-rank rank-3">3</div>
+                <div class="leaderboard-player">
+                    <div class="leaderboard-player-name">BioEngineer</div>
+                    <div class="leaderboard-player-level">Level 35 • Elder</div>
+                </div>
+                <div class="leaderboard-score">12,850</div>
+            </li>
+            <li class="leaderboard-entry">
+                <div class="leaderboard-rank rank-other">4</div>
+                <div class="leaderboard-player">
+                    <div class="leaderboard-player-name">GreenPioneer</div>
+                    <div class="leaderboard-player-level">Level 28 • Protector</div>
+                </div>
+                <div class="leaderboard-score">10,300</div>
+            </li>
+            <li class="leaderboard-entry" style="background: rgba(100, 255, 218, 0.1);">
+                <div class="leaderboard-rank rank-other">47</div>
+                <div class="leaderboard-player">
+                    <div class="leaderboard-player-name">You</div>
+                    <div class="leaderboard-player-level">Level 1 • Seedling</div>
+                </div>
+                <div class="leaderboard-score">0</div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Achievement Notification -->
+    <div class="achievement-notification" id="achievementNotification">
+        <div class="achievement-icon" id="achievementIcon">🏆</div>
+        <div class="achievement-content">
+            <div class="achievement-title" id="achievementTitle">Achievement Unlocked!</div>
+            <div class="achievement-description" id="achievementDescription">You've taken your first step!</div>
+            <div class="achievement-reward">
+                <span class="achievement-xp" id="achievementXP">+100 XP</span>
+                <span class="achievement-badge" id="achievementBadge">Explorer Badge</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mission Complete Animation -->
+    <div class="mission-complete" id="missionComplete">MISSION COMPLETE!</div>
+
+    <!-- Badge Collection -->
+    <div class="badge-collection" id="badgeCollection">
+        <div class="badge-slot" title="Explorer Badge">
+            <span class="badge-icon">🔍</span>
+        </div>
+        <div class="badge-slot" title="First Seed">
+            <span class="badge-icon">🌱</span>
+        </div>
+        <div class="badge-slot" title="Network Builder">
+            <span class="badge-icon">🔗</span>
+        </div>
+        <div class="badge-slot" title="Innovation Master">
+            <span class="badge-icon">💡</span>
+        </div>
+        <div class="badge-slot" title="Earth Guardian">
+            <span class="badge-icon">🛡️</span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#home" class="logo">Planetary Restoration Archive</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#innovations" onclick="trackAction('navigate', 'innovations')">Innovations</a></li>
+                    <li><a href="#deployments" onclick="trackAction('navigate', 'deployments')">Deployments</a></li>
+                    <li><a href="#intelligence" onclick="trackAction('navigate', 'intelligence')">Intelligence</a></li>
+                    <li><a href="#join" onclick="trackAction('navigate', 'join')">Join</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1 class="hero-title">A Living Blueprint for Planetary Regeneration</h1>
+        <p class="hero-subtitle">The definitive open-source archive of restoration technologies, decentralized AI systems, and ecological healing protocols.</p>
+        <p class="hero-description">More than data — this is an emergent planetary operating system where every innovation is a seed, every deployment a sanctuary, and every contributor a guardian of Earth's renaissance.</p>
+        <div class="cta-group">
+            <button class="cta-primary" onclick="startJourney()">Begin Your Journey</button>
+            <button class="cta-secondary" onclick="showLeaderboard()">Guardian Rankings</button>
+        </div>
+    </section>
+
+    <!-- Main Sections -->
+    <section class="section" id="innovations">
+        <div class="section-header">
+            <h2 class="section-title">🧬 Innovations</h2>
+            <p class="section-subtitle">Breakthrough technologies for atmospheric restoration, soil regeneration, water purification, and symbiotic AI systems.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card" onclick="interactWithCard('bioengineering', 25)">
+                <span class="feature-icon">🧬</span>
+                <h3 class="feature-title">Bioengineering Protocols</h3>
+                <p class="feature-description">CRISPR-enhanced mycorrhizae, atmospheric processors, and carbon-sequestering organism blueprints for rapid ecosystem restoration.</p>
+                <a href="#" class="feature-link">Browse Protocols →</a>
+            </div>
+            <div class="feature-card" onclick="interactWithCard('ai-systems', 25)">
+                <span class="feature-icon">🤖</span>
+                <h3 class="feature-title">Decentralized AI Systems</h3>
+                <p class="feature-description">Self-organizing agent networks for climate monitoring, resource optimization, and autonomous restoration deployment.</p>
+                <a href="#" class="feature-link">Access AI Tools →</a>
+            </div>
+            <div class="feature-card" onclick="interactWithCard('energy', 25)">
+                <span class="feature-icon">⚡</span>
+                <h3 class="feature-title">Energy Transformation</h3>
+                <p class="feature-description">Fusion reactors, atmospheric energy harvesting, and distributed power systems for post-carbon civilization.</p>
+                <a href="#" class="feature-link">Energy Blueprints →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galaxy Map -->
+    <section class="galaxy-section" id="galaxy">
+        <div class="section-header">
+            <h2 class="section-title">Project Constellation</h2>
+            <p class="section-subtitle">Interactive map of all active restoration nodes worldwide</p>
+        </div>
+        <div class="galaxy-container" id="galaxyMap">
+            <!-- Nodes will be generated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="ethos">
+        <div class="footer-content">
+            <h3 class="footer-title">🛡️ Guardian Ethos</h3>
+            <p class="footer-text">We are Foster + Navi — nurturers and navigators of Earth's renaissance. Every decision we make serves seven generations forward.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Gamification System Core
+        class GamificationSystem {
+            constructor() {
+                this.userData = this.loadUserData() || this.createNewUser();
+                this.achievements = this.initAchievements();
+                this.missions = this.initMissions();
+                this.init();
+            }
+
+            createNewUser() {
+                return {
+                    name: 'Guardian',
+                    level: 1,
+                    xp: 0,
+                    totalXP: 0,
+                    restorationPoints: 0,
+                    contributions: 0,
+                    badges: [],
+                    streak: 0,
+                    lastVisit: Date.now(),
+                    achievements: [],
+                    completedMissions: []
+                };
+            }
+
+            loadUserData() {
+                const saved = localStorage.getItem('guardianData');
+                return saved ? JSON.parse(saved) : null;
+            }
+
+            saveUserData() {
+                localStorage.setItem('guardianData', JSON.stringify(this.userData));
+            }
+
+            initAchievements() {
+                return [
+                    { id: 'first_step', name: 'First Step', desc: 'Begin your journey as a Guardian', icon: '👣', xp: 50, badge: 'Initiate' },
+                    { id: 'explorer', name: 'Explorer', desc: 'Discover 5 different sections', icon: '🔍', xp: 100, badge: 'Explorer' },
+                    { id: 'seed_planter', name: 'Seed Planter', desc: 'Complete your first restoration mission', icon: '🌱', xp: 150, badge: 'Grower' },
+                    { id: 'network_builder', name: 'Network Builder', desc: 'Connect with the guardian network', icon: '🔗', xp: 200, badge: 'Networker' },
+                    { id: 'innovator', name: 'Innovation Master', desc: 'Study all innovation protocols', icon: '💡', xp: 300, badge: 'Innovator' },
+                    { id: 'earth_guardian', name: 'Earth Guardian', desc: 'Reach level 10', icon: '🛡️', xp: 500, badge: 'Guardian' }
+                ];
+            }
+
+            initMissions() {
+                return [
+                    { id: 'plant_seed', name: 'Plant First Seed', icon: '🌱', xp: 50, progress: 0, maxProgress: 1 },
+                    { id: 'study_protocol', name: 'Study Protocol', icon: '📚', xp: 75, progress: 0, maxProgress: 3 },
+                    { id: 'join_network', name: 'Join Network', icon: '🤝', xp: 100, progress: 0, maxProgress: 1 }
+                ];
+            }
+
+            init() {
+                this.updateDisplay();
+                this.checkDailyStreak();
+                this.initializeEventListeners();
+            }
+
+            updateDisplay() {
+                // Update HUD
+                document.getElementById('userLevel').textContent = this.userData.level;
+                document.getElementById('currentXP').textContent = this.userData.xp;
+                document.getElementById('maxXP').textContent = this.getMaxXP();
+                document.getElementById('restorationPoints').textContent = this.userData.restorationPoints;
+                document.getElementById('contributions').textContent = this.userData.contributions;
+                document.getElementById('badges').textContent = this.userData.badges.length;
+                document.getElementById('streak').textContent = this.userData.streak;
+
+                // Update XP Bar
+                const xpPercentage = (this.userData.xp / this.getMaxXP()) * 100;
+                document.getElementById('xpBar').style.width = xpPercentage + '%';
+
+                // Update level badge
+                const levelBadge = document.querySelector('.level-badge');
+                levelBadge.textContent = this.getLevelTitle();
+            }
+
+            getMaxXP() {
+                return 100 * Math.pow(1.2, this.userData.level - 1);
+            }
+
+            getLevelTitle() {
+                const titles = [
+                    'Seedling', 'Sprout', 'Sapling', 'Tree', 'Grove',
+                    'Forest', 'Protector', 'Ranger', 'Elder', 'Master Guardian'
+                ];
+                const index = Math.min(Math.floor((this.userData.level - 1) / 5), titles.length - 1);
+                return titles[index];
+            }
+
+            addXP(amount) {
+                this.userData.xp += amount;
+                this.userData.totalXP += amount;
+                
+                // Check for level up
+                while (this.userData.xp >= this.getMaxXP()) {
+                    this.userData.xp -= this.getMaxXP();
+                    this.userData.level++;
+                    this.levelUp();
+                }
+                
+                this.updateDisplay();
+                this.saveUserData();
+            }
+
+            levelUp() {
+                this.showNotification('Level Up!', `You've reached Level ${this.userData.level}!`, '⬆️', 200);
+                
+                // Check for level-based achievements
+                if (this.userData.level === 10) {
+                    this.unlockAchievement('earth_guardian');
+                }
+            }
+
+            addRestorationPoints(amount) {
+                this.userData.restorationPoints += amount;
+                this.updateDisplay();
+                this.saveUserData();
+            }
+
+            unlockAchievement(achievementId) {
+                if (this.userData.achievements.includes(achievementId)) return;
+                
+                const achievement = this.achievements.find(a => a.id === achievementId);
+                if (!achievement) return;
+                
+                this.userData.achievements.push(achievementId);
+                this.userData.badges.push(achievement.badge);
+                
+                this.showAchievement(achievement);
+                this.addXP(achievement.xp);
+                this.saveUserData();
+            }
+
+            showAchievement(achievement) {
+                const notification = document.getElementById('achievementNotification');
+                document.getElementById('achievementIcon').textContent = achievement.icon;
+                document.getElementById('achievementTitle').textContent = achievement.name;
+                document.getElementById('achievementDescription').textContent = achievement.desc;
+                document.getElementById('achievementXP').textContent = `+${achievement.xp} XP`;
+                document.getElementById('achievementBadge').textContent = `${achievement.badge} Badge`;
+                
+                notification.classList.add('show');
+                
+                // Update badge collection
+                const badgeSlots = document.querySelectorAll('.badge-slot');
+                const badgeIndex = this.userData.badges.length - 1;
+                if (badgeSlots[badgeIndex]) {
+                    badgeSlots[badgeIndex].classList.add('earned');
+                }
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 5000);
+            }
+
+            showNotification(title, desc, icon, xp) {
+                const notification = document.getElementById('achievementNotification');
+                document.getElementById('achievementIcon').textContent = icon;
+                document.getElementById('achievementTitle').textContent = title;
+                document.getElementById('achievementDescription').textContent = desc;
+                document.getElementById('achievementXP').textContent = `+${xp} XP`;
+                document.getElementById('achievementBadge').style.display = 'none';
+                
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    document.getElementById('achievementBadge').style.display = 'inline-block';
+                }, 3000);
+            }
+
+            checkDailyStreak() {
+                const now = Date.now();
+                const lastVisit = this.userData.lastVisit;
+                const oneDayMs = 24 * 60 * 60 * 1000;
+                
+                if (now - lastVisit > oneDayMs && now - lastVisit < 2 * oneDayMs) {
+                    this.userData.streak++;
+                    this.showNotification('Daily Streak!', `${this.userData.streak} days in a row!`, '🔥', 25);
+                } else if (now - lastVisit > 2 * oneDayMs) {
+                    this.userData.streak = 1;
+                }
+                
+                this.userData.lastVisit = now;
+                this.updateDisplay();
+                this.saveUserData();
+            }
+
+            initializeEventListeners() {
+                // Track navigation
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        this.userData.contributions++;
+                        this.addXP(5);
+                        this.updateDisplay();
+                    });
+                });
+            }
+        }
+
+        // Initialize Gamification System
+        const gameSystem = new GamificationSystem();
+
+        // Interactive Functions
+        function toggleHud() {
+            const hud = document.getElementById('gameHud');
+            hud.classList.toggle('minimized');
+        }
+
+        function showLeaderboard() {
+            document.getElementById('leaderboardPopup').style.display = 'block';
+            gameSystem.addXP(10);
+        }
+
+        function hideLeaderboard() {
+            document.getElementById('leaderboardPopup').style.display = 'none';
+        }
+
+        function switchLeaderboardTab(tab, type) {
+            document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            // In a real implementation, this would load different leaderboard data
+        }
+
+        function startJourney() {
+            if (!gameSystem.userData.achievements.includes('first_step')) {
+                gameSystem.unlockAchievement('first_step');
+            }
+            gameSystem.addXP(25);
+            gameSystem.addRestorationPoints(10);
+        }
+
+        function interactWithCard(type, xp) {
+            gameSystem.addXP(xp);
+            gameSystem.addRestorationPoints(5);
+            gameSystem.userData.contributions++;
+            gameSystem.updateDisplay();
+            
+            // Check for explorer achievement
+            if (gameSystem.userData.contributions >= 5 && !gameSystem.userData.achievements.includes('explorer')) {
+                gameSystem.unlockAchievement('explorer');
+            }
+        }
+
+        function completeMission(missionIndex) {
+            const missionComplete = document.getElementById('missionComplete');
+            missionComplete.style.animation = 'missionComplete 2s ease';
+            
+            setTimeout(() => {
+                missionComplete.style.animation = '';
+            }, 2000);
+            
+            const xpRewards = [50, 75, 100];
+            gameSystem.addXP(xpRewards[missionIndex]);
+            gameSystem.addRestorationPoints(20);
+            
+            // Remove mission from list
+            const missionsList = document.getElementById('missionsList');
+            const missionItems = missionsList.querySelectorAll('.mission-item');
+            if (missionItems[missionIndex]) {
+                missionItems[missionIndex].style.opacity = '0.5';
+                missionItems[missionIndex].style.pointerEvents = 'none';
+            }
+            
+            // Update mission count
+            const currentCount = parseInt(document.getElementById('missionCount').textContent);
+            document.getElementById('missionCount').textContent = Math.max(0, currentCount - 1);
+            
+            if (missionIndex === 0 && !gameSystem.userData.achievements.includes('seed_planter')) {
+                gameSystem.unlockAchievement('seed_planter');
+            }
+        }
+
+        function trackAction(category, action) {
+            console.log(`Action tracked: ${category} - ${action}`);
+            gameSystem.addXP(5);
+        }
+
+        // Generate cosmic particles
+        function createParticles() {
+            const cosmicBg = document.getElementById('cosmicBg');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                cosmicBg.appendChild(particle);
+            }
+
+            // Add bio pulses
+            for (let i = 0; i < 5; i++) {
+                const pulse = document.createElement('div');
+                pulse.className = 'bio-pulse';
+                pulse.style.left = Math.random() * 100 + '%';
+                pulse.style.top = Math.random() * 100 + '%';
+                pulse.style.animationDelay = Math.random() * 8 + 's';
+                cosmicBg.appendChild(pulse);
+            }
+        }
+
+        // Generate galaxy nodes with gamification
+        function createGalaxyNodes() {
+            const galaxyMap = document.getElementById('galaxyMap');
+            const nodeTypes = ['innovation', 'bio', 'deployment'];
+            
+            for (let i = 0; i < 30; i++) {
+                const node = document.createElement('div');
+                node.className = `galaxy-node ${nodeTypes[Math.floor(Math.random() * nodeTypes.length)]}`;
+                node.style.left = (10 + Math.random() * 80) + '%';
+                node.style.top = (10 + Math.random() * 80) + '%';
+                node.style.animationDelay = Math.random() * 3 + 's';
+                
+                node.addEventListener('click', () => {
+                    node.style.transform = 'scale(2)';
+                    node.style.boxShadow = '0 0 30px rgba(100, 255, 218, 1)';
+                    gameSystem.addXP(10);
+                    gameSystem.addRestorationPoints(3);
+                    
+                    setTimeout(() => {
+                        node.style.transform = '';
+                        node.style.boxShadow = '';
+                    }, 500);
+                });
+                
+                galaxyMap.appendChild(node);
+            }
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            createGalaxyNodes();
+            
+            // Welcome back message
+            if (gameSystem.userData.level > 1) {
+                setTimeout(() => {
+                    gameSystem.showNotification(
+                        'Welcome Back!',
+                        `Continue your journey, Level ${gameSystem.userData.level} Guardian`,
+                        '🌍',
+                        0
+                    );
+                }, 1000);
+            }
+        });
+
+        // Keyboard shortcuts for gamification
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'l' || e.key === 'L') {
+                showLeaderboard();
+            }
+            if (e.key === 'h' || e.key === 'H') {
+                toggleHud();
+            }
+        });
+    </script>
+</body>
+</html>

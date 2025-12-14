@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Engagement Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Auth Screen Styles */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .auth-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-title {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .toggle-auth {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .toggle-auth a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info h2 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .user-level {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        /* XP System */
+        .xp-container {
+            margin-bottom: 20px;
+        }
+
+        .level-display {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .level-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+
+        .level-label {
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .xp-bar-container {
+            background: #e9ecef;
+            border-radius: 20px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .xp-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .xp-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Streak Tracker */
+        .streak-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .streak-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #fd7e14;
+            display: block;
+        }
+
+        .streak-label {
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .streak-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .streak-day {
+            aspect-ratio: 1;
+            background: #e9ecef;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .streak-day.active {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .streak-day.today {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Leaderboard */
+        .leaderboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-rank {
+            font-weight: bold;
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        .leaderboard-name {
+            flex-grow: 1;
+        }
+
+        .leaderboard-score {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        /* Teacher Panel */
+        .teacher-panel-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #6f42c1, #e83e8c);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .teacher-panel-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Achievement Badge */
+        .achievement {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .leaderboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: white;
+            font-size: 18px;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading">
+        <h2>Loading School Engagement Platform...</h2>
+    </div>
+
+    <!-- Authentication Screen -->
+    <div id="authScreen" class="auth-container" style="display: none;">
+        <div class="auth-box">
+            <h1 class="auth-title">School Portal</h1>
+            
+            <div id="errorMessage"></div>
+            
+            <!-- Login Form -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" style="display: none;">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required minlength="6">
+                </div>
+                <button type="submit" class="btn">Sign Up</button>
+            </form>
+
+            <div class="toggle-auth">
+                <span id="authToggleText">Don't have an account?</span>
+                <a href="#" id="authToggleLink">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="user-info">
+                    <h2 id="userName">Student Dashboard</h2>
+                    <div class="user-level">Level <span id="userLevel">1</span> Scholar</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+
+            <!-- Main Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- XP System -->
+                <div class="card">
+                    <h3>🎯 Experience Points</h3>
+                    <div class="xp-container">
+                        <div class="level-display">
+                            <span class="level-number" id="levelNumber">1</span>
+                            <span class="level-label">Current Level</span>
+                        </div>
+                        <div class="xp-bar-container">
+                            <div class="xp-bar" id="xpBar" style="width: 65%;"></div>
+                        </div>
+                        <div class="xp-text">
+                            <span id="currentXP">650</span> / <span id="nextLevelXP">1000</span> XP
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <span class="achievement">Homework Hero</span>
+                            <span class="achievement">Quiz Master</span>
+                            <span class="achievement">Class Participant</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Streak -->
+                <div class="card">
+                    <h3>🔥 Daily Streak</h3>
+                    <div class="streak-display">
+                        <span class="streak-number" id="streakNumber">7</span>
+                        <span class="streak-label">Days</span>
+                    </div>
+                    <div class="streak-calendar">
+                        <div class="streak-day active">M</div>
+                        <div class="streak-day active">T</div>
+                        <div class="streak-day active">W</div>
+                        <div class="streak-day active">T</div>
+                        <div class="streak-day active">F</div>
+                        <div class="streak-day active">S</div>
+                        <div class="streak-day today">S</div>
+                    </div>
+                    <p style="font-size: 14px; color: #666; text-align: center;">
+                        Great job! Keep it up to unlock streak bonuses!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Leaderboard Section -->
+            <div class="leaderboard-grid">
+                <div class="card">
+                    <h3>🏆 Class Leaderboard</h3>
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">1.</span>
+                        <span class="leaderboard-name">Sarah Johnson</span>
+                        <span class="leaderboard-score">2,450 XP</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">2.</span>
+                        <span class="leaderboard-name">Mike Chen</span>
+                        <span class="leaderboard-score">2,340 XP</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">3.</span>
+                        <span class="leaderboard-name">Emma Davis</span>
+                        <span class="leaderboard-score">2,190 XP</span>
+                    </div>
+                    <div class="leaderboard-item" style="background: #e3f2fd;">
+                        <span class="leaderboard-rank">4.</span>
+                        <span class="leaderboard-name">You</span>
+                        <span class="leaderboard-score">1,850 XP</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">5.</span>
+                        <span class="leaderboard-name">Alex Rivera</span>
+                        <span class="leaderboard-score">1,720 XP</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>👨‍🏫 Teacher Panel</h3>
+                    <p style="margin-bottom: 20px; color: #666;">
+                        Access teacher tools and classroom management features.
+                    </p>
+                    <button class="teacher-panel-btn" id="teacherPanelBtn">
+                        Access Teacher Tools
+                    </button>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4 style="color: #667eea; margin-bottom: 15px;">📊 Quick Stats</h4>
+                        <div style="font-size: 14px; color: #666;">
+                            <p><strong>Total Students:</strong> 28</p>
+                            <p><strong>Active Today:</strong> 24</p>
+                            <p><strong>Assignments Due:</strong> 3</p>
+                            <p><strong>Average Class Level:</strong> 3.2</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ===========================================
+        // FIREBASE CONFIGURATION
+        // ===========================================
+        // TODO: Replace with your actual Firebase config
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY_HERE",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ===========================================
+        // DOM ELEMENTS
+        // ===========================================
+        const loading = document.getElementById('loading');
+        const authScreen = document.getElementById('authScreen');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const authToggleLink = document.getElementById('authToggleLink');
+        const authToggleText = document.getElementById('authToggleText');
+        const errorMessage = document.getElementById('errorMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const teacherPanelBtn = document.getElementById('teacherPanelBtn');
+
+        // ===========================================
+        // AUTH STATE MANAGEMENT
+        // ===========================================
+        let isLoginMode = true;
+        let currentUser = null;
+
+        // Toggle between login and signup
+        authToggleLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+            
+            if (isLoginMode) {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                authToggleText.textContent = "Don't have an account?";
+                authToggleLink.textContent = 'Sign up';
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                authToggleText.textContent = 'Already have an account?';
+                authToggleLink.textContent = 'Login';
+            }
+            clearError();
+        });
+
+        // ===========================================
+        // AUTHENTICATION FUNCTIONS
+        // ===========================================
+        function showError(message) {
+            errorMessage.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+        function clearError() {
+            errorMessage.innerHTML = '';
+        }
+
+        function showLoading() {
+            loading.style.display = 'block';
+            authScreen.style.display = 'none';
+            dashboard.style.display = 'none';
+        }
+
+        function showAuth() {
+            loading.style.display = 'none';
+            authScreen.style.display = 'block';
+            dashboard.style.display = 'none';
+        }
+
+        function showDashboard() {
+            loading.style.display = 'none';
+            authScreen.style.display = 'none';
+            dashboard.style.display = 'block';
+        }
+
+        // Login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearError();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        // Signup form submission
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearError();
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Create user profile in Firestore
+                await db.collection('users').doc(user.uid).set({
+                    name: name,
+                    email: email,
+                    level: 1,
+                    xp: 650,
+                    streak: 7,
+                    achievements: ['Homework Hero', 'Quiz Master', 'Class Participant'],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        });
+
+        // ===========================================
+        // DASHBOARD FUNCTIONS
+        // ===========================================
+        async function loadUserData(user) {
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    updateDashboard(userData);
+                    
+                    // Update last login
+                    await db.collection('users').doc(user.uid).update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    // Create default user data if document doesn't exist
+                    const defaultData = {
+                        name: user.displayName || user.email.split('@')[0],
+                        email: user.email,
+                        level: 1,
+                        xp: 650,
+                        streak: 7,
+                        achievements: ['New Student'],
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    
+                    await db.collection('users').doc(user.uid).set(defaultData);
+                    updateDashboard(defaultData);
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Use default values if Firestore fails
+                updateDashboard({
+                    name: user.email.split('@')[0],
+                    level: 1,
+                    xp: 650,
+                    streak: 7
+                });
+            }
+        }
+
+        function updateDashboard(userData) {
+            document.getElementById('userName').textContent = `Welcome, ${userData.name}!`;
+            document.getElementById('userLevel').textContent = userData.level;
+            document.getElementById('levelNumber').textContent = userData.level;
+            document.getElementById('currentXP').textContent = userData.xp;
+            document.getElementById('streakNumber').textContent = userData.streak;
+            
+            // Update XP bar
+            const xpPercentage = (userData.xp % 1000) / 10; // Assuming 1000 XP per level
+            document.getElementById('xpBar').style.width = `${xpPercentage}%`;
+        }
+
+        // ===========================================
+        // GAME MECHANICS
+        // ===========================================
+        function simulateXPGain(amount) {
+            // This would be called when students complete activities
+            if (currentUser) {
+                const currentXP = parseInt(document.getElementById('currentXP').textContent);
+                const newXP = currentXP + amount;
+                
+                // Update UI
+                document.getElementById('currentXP').textContent = newXP;
+                
+                // Update database
+                db.collection('users').doc(currentUser.uid).update({
+                    xp: firebase.firestore.FieldValue.increment(amount)
+                });
+                
+                // Check for level up
+                const newLevel = Math.floor(newXP / 1000) + 1;
+                const currentLevel = parseInt(document.getElementById('userLevel').textContent);
+                
+                if (newLevel > currentLevel) {
+                    // Level up logic
+                    document.getElementById('userLevel').textContent = newLevel;
+                    document.getElementById('levelNumber').textContent = newLevel;
+                    
+                    // Update database
+                    db.collection('users').doc(currentUser.uid).update({
+                        level: newLevel
+                    });
+                    
+                    // Show level up notification (you can enhance this)
+                    alert(`🎉 Congratulations! You've reached Level ${newLevel}!`);
+                }
+                
+                // Update XP bar
+                const xpPercentage = (newXP % 1000) / 10;
+                document.getElementById('xpBar').style.width = `${xpPercentage}%`;
+            }
+        }
+
+        // Teacher panel button
+        teacherPanelBtn.addEventListener('click', () => {
+            alert('Teacher panel functionality will be implemented here. This would include:\n\n• Student progress tracking\n• Assignment management\n• Class analytics\n• Reward/XP management\n• Communication tools');
+        });
+
+        // Demo XP gain (remove in production)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'x' && currentUser) {
+                simulateXPGain(50);
+            }
+        });
+
+        // ===========================================
+        // AUTH STATE LISTENER
+        // ===========================================
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadUserData(user);
+                showDashboard();
+            } else {
+                currentUser = null;
+                showAuth();
+            }
+        });
+
+        // ===========================================
+        // INITIALIZATION
+        // ===========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show loading initially
+            showLoading();
+            
+            // The auth state listener will handle showing the appropriate screen
+        });
+
+        // ===========================================
+        // DEMO DATA AND TESTING
+        // ===========================================
+        // In a real implementation, you would remove this section
+        console.log('School Engagement Platform loaded successfully!');
+        console.log('Press "x" key to simulate XP gain (when logged in)');
+        console.log('Remember to add your Firebase configuration in the firebaseConfig object');
+    </script>
+</body>
+</html>
